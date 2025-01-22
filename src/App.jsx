@@ -5,11 +5,6 @@ import './App.css'
 
 import { DexcomClient } from 'dexcom-share-api';
 
-const client = new DexcomClient({
-    username: import.meta.env.VITE_USERNAME,
-    password: import.meta.env.VITE_PASSWORD,
-    server: 'eu',
-});
 
 function App() {
     const [mmol, setMmol] = useState('')
@@ -20,6 +15,13 @@ function App() {
     const [target, setTarget] = useState(6)
     const [carbs, setCarbs] = useState(0)
     const [bolus, setBolus] = useState('')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const client = new DexcomClient({
+        username,
+        password,
+        server: 'eu',
+    });
     useEffect(() => {
         getMmol()
         console.log('fetch')
@@ -69,6 +71,10 @@ function App() {
             <input value={carbs} onChange={e => setCarbs(e.target.value)}></input>
 
             <h1>Bolus: {bolus}</h1>
+            <p>Username</p>
+            <input value={username} onChange={e => setUsername(e.target.value)}></input>
+            <p>Password</p>
+            <input type='password' value={password} onChange={e => setPassword(e.target.value)}></input>
         </>
     );
 }
