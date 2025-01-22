@@ -71,17 +71,18 @@ function App() {
 
     return (
         <>
-            <p>{mmol}</p>
+            <p>Current Blood Glucose</p>
+            <input type='number' value={mmol} onChange={e => setMmol(e.target.value)}></input>
             <p>{trend}</p>
             <p>{time ? new Date(time).toTimeString() : 'Default Reading login to get current data'}</p>
             < p > Insulin ratio:</p>
-            <input value={ratio} onChange={e => setRatio(e.target.value)}></input>
+            <input type='number' value={ratio} onChange={e => setRatio(e.target.value)}></input>
             <p>Correction Factor:</p>
-            <input value={factor} onChange={e => setFactor(e.target.value)}></input>
+            <input type='number' value={factor} onChange={e => setFactor(e.target.value)}></input>
             <p>Target:</p>
-            <input value={target} onChange={e => setTarget(e.target.value)}></input>
+            <input type='number' value={target} onChange={e => setTarget(e.target.value)}></input>
             <p>Carbs:</p>
-            <input value={carbs} onChange={e => setCarbs(e.target.value)}></input>
+            <input type='number' value={carbs} onChange={e => setCarbs(e.target.value)}></input>
 
             <h1>Bolus: {bolus}</h1>
             <p>Username</p>
