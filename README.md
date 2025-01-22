@@ -1,8 +1,7 @@
-# React + Vite
+# Bolus Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This calculator is to aid people with diabetes in dosing descisions for their mealtime insulin.
 
-Currently, two official plugins are available:
+It allows you to fetch your current glucose data from the dexcom servers and uses this to calculate a correction dose which is used in addition to your meal data to calculate the dose which will bring you to your target value.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
