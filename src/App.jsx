@@ -38,7 +38,7 @@ function App() {
     }, [])
 
     useEffect(() => {
-        if ((Date.now() - time) >= 300000) {
+        if ((Date.now() - time) >= 300000 && time != '') {
             getMmol()
         }
         calculateBolus()
