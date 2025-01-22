@@ -75,7 +75,7 @@ function App() {
             <input type='number' value={mmol} onChange={e => setMmol(e.target.value)}></input>
             <p>{trend}</p>
             <p>{time ? new Date(time).toTimeString() : 'Default Reading login to get current data'}</p>
-            < p > Insulin ratio:</p>
+            <p> Insulin ratio:</p>
             <input type='number' value={ratio} onChange={e => setRatio(e.target.value)}></input>
             <p>Correction Factor:</p>
             <input type='number' value={factor} onChange={e => setFactor(e.target.value)}></input>
@@ -86,7 +86,7 @@ function App() {
 
             <h1>Bolus: {bolus}</h1>
             <p>Username</p>
-            <input value={username} onChange={e => setUsername(e.target.value)}></input>
+            <input type='username' value={username} onChange={e => setUsername(e.target.value)}></input>
             <p>Password</p>
             <input type='password' value={password} onChange={e => setPassword(e.target.value)}></input>
             <button onClick={login}>LogIn</button>
