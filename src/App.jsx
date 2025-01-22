@@ -7,22 +7,32 @@ import { DexcomClient } from 'dexcom-share-api';
 
 
 function App() {
-    const [mmol, setMmol] = useState('')
+    const [mmol, setMmol] = useState(6)
     const [time, setTime] = useState('')
     const [trend, setTrend] = useState('')
     const [ratio, setRatio] = useState(40)
-    const [factor, setFactor] = useState(4)
+    const [factor, setFactor] = useState(6)
     const [target, setTarget] = useState(6)
     const [carbs, setCarbs] = useState(0)
     const [bolus, setBolus] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const client = new DexcomClient({
+
+    let client = new DexcomClient({
         username,
         password,
         server: 'eu',
     });
+    const login = () => {
+        client = new DexcomClient({
+            username,
+            password,
+            server: 'eu',
+        });
+        getMmol()
+    }
     useEffect(() => {
+        login()
         getMmol()
         console.log('fetch')
     }, [])
@@ -40,7 +50,10 @@ function App() {
             setMmol(res[0]['mmol'])
             setTime(res[0]['timestamp'])
             setTrend(res[0]['trend'])
-        })
+        },
+            (err) => {
+                console.log('error loading')
+            })
     }
 
     const calculateBolus = () => {
@@ -60,8 +73,8 @@ function App() {
         <>
             <p>{mmol}</p>
             <p>{trend}</p>
-            <p>{new Date(time).toTimeString()}</p>
-            <p>Insulin ratio:</p>
+            <p>{time ? new Date(time).toTimeString() : 'Default Reading login to get current data'}</p>
+            < p > Insulin ratio:</p>
             <input value={ratio} onChange={e => setRatio(e.target.value)}></input>
             <p>Correction Factor:</p>
             <input value={factor} onChange={e => setFactor(e.target.value)}></input>
@@ -75,6 +88,7 @@ function App() {
             <input value={username} onChange={e => setUsername(e.target.value)}></input>
             <p>Password</p>
             <input type='password' value={password} onChange={e => setPassword(e.target.value)}></input>
+            <button onClick={login}>LogIn</button>
         </>
     );
 }
