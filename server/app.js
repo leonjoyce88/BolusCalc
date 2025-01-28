@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
         }
         )
     } else {
+        console.log("sent cached data")
         res.send(currentData)
     }
 })
