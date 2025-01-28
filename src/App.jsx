@@ -47,7 +47,7 @@ function App() {
                     <span className="trend-label">Trend:</span>
                     <span>{reading.trend ? reading.trend : "Waiting for Data"}</span>
                     <span className="time-label">Time:</span>
-                    <span>{reading.timestamp ? new Date(reading.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Waiting for Data'}</span>
+                    <span>{reading.timestamp ? new Date(reading.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " " + Math.trunc((Date.now() - reading.timestamp) / 60000) + " minutes ago" : 'Waiting for Data'}</span>
                 </div>
             </div>
 
