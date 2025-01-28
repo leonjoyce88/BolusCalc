@@ -86,7 +86,7 @@ function App() {
 
             <h1>Bolus: {bolus}</h1>
             <p>Username</p>
-            <input type='username' value={username} onChange={e => setUsername(e.target.value)}></input>
+            <input type='email' value={username} onChange={e => setUsername(e.target.value)}></input>
             <p>Password</p>
             <input type='password' value={password} onChange={e => setPassword(e.target.value)}></input>
             <button onClick={login}>LogIn</button>
