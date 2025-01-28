@@ -48,13 +48,13 @@ function App() {
             <input type='number' value={mmol} onChange={e => setMmol(e.target.value)}></input>
             <p>{trend}</p>
             <p>{time ? new Date(time).toTimeString() : 'Default Reading login to get current data'}</p>
-            <p> Carb ratio:(grams/unit)</p>
+            <p> Carb ratio(grams/unit):</p>
             <input type='number' value={ratio} onChange={e => setRatio(e.target.value)}></input>
-            <p>Correction Factor:(mmol/unit)</p>
+            <p>Correction Factor(mmol/unit):</p>
             <input type='number' value={factor} onChange={e => setFactor(e.target.value)}></input>
             <p>Target mmol:</p>
             <input type='number' value={target} onChange={e => setTarget(e.target.value)}></input>
-            <p>Meal Carbs:(grams)</p>
+            <p>Meal Carbs(grams):</p>
             <input type='number' value={carbs} onChange={e => setCarbs(e.target.value)}></input>
 
             <h1>Bolus: {bolus}</h1>
