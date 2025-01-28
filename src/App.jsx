@@ -36,7 +36,7 @@ function App() {
         console.log(total)
 
         if (total < 0.5) {
-            setBolus('none')
+            setBolus(0)
         } else {
             setBolus(total)
         }
@@ -51,9 +51,9 @@ function App() {
 
                 <div className="trend-time-row">
                     <span className="trend-label">Trend:</span>
-                    <span>{trend}</span>
+                    <span>{trend ? trend : "Waiting for Data"}</span>
                     <span className="time-label">Time:</span>
-                    <span>{time ? new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Default Reading login to get current data'}</span>
+                    <span>{time ? new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Waiting for Data'}</span>
                 </div>
             </div>
 
@@ -80,7 +80,7 @@ function App() {
             </div>
 
             <div className="bolus-result">
-                <h1>Bolus: {bolus}</h1>
+                <h1>{bolus ? (bolus + " units") : "None"}</h1>
             </div>
         </>
     );

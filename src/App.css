@@ -57,17 +57,53 @@ body {
     align-items: center;
 }
 
+/* Larger input sizes */
+input {
+    width: 100%;
+    padding: 20px;
+    /* Even more padding */
+    font-size: 22px;
+    /* Larger font size */
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    border-color: #bb86fc;
+    box-shadow: 0 0 5px rgba(187, 134, 252, 0.5);
+}
+
+/* Hover effect on labels */
+label {
+    font-weight: bold;
+    color: #bbbbbb;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    /* Smooth transition for color change */
+}
+
+label:hover {
+    color: #bb86fc;
+    /* Change color to match theme on hover */
+}
+
 /* Styling for the bolus result at the bottom */
 .bolus-result {
     background-color: #bb86fc;
-    padding: 20px;
+    padding: 30px;
+    /* Larger padding */
     border-radius: 10px;
     margin-top: 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .bolus-result h1 {
-    font-size: 48px;
+    font-size: 56px;
+    /* Larger font for bolus result */
     margin: 0;
     font-weight: bold;
     color: #121212;
