@@ -18,41 +18,25 @@ function App() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    let client = new DexcomClient({
-        username,
-        password,
-        server: 'eu',
-    });
-    const login = () => {
-        client = new DexcomClient({
-            username,
-            password,
-            server: 'eu',
-        });
-        getMmol()
-    }
     useEffect(() => {
-        login()
         getMmol()
         console.log('fetch')
     }, [])
 
     useEffect(() => {
-        if ((Date.now() - time) >= 300000 && time != '') {
+        if ((Date.now() - time) >= 300000 || time != '') {
             getMmol()
         }
         calculateBolus()
     }, [mmol, ratio, factor, target, carbs, bolus])
 
     function getMmol() {
-        client.getEstimatedGlucoseValues().then((res) => {
-            console.log(res[0])
-            setMmol(res[0]['mmol'])
-            setTime(res[0]['timestamp'])
-            setTrend(res[0]['trend'])
-        },
-            (err) => {
-                console.log('error loading')
+        fetch('http://localhost:3000/status')
+            .then(res => res.json())
+            .then(data => {
+                setMmol(data[0].mmol)
+                setTime(data[0].timestamp)
+                setTrend(data[0].trend)
             })
     }
 
@@ -89,7 +73,6 @@ function App() {
             <input type='email' value={username} onChange={e => setUsername(e.target.value)}></input>
             <p>Password</p>
             <input type='password' value={password} onChange={e => setPassword(e.target.value)}></input>
-            <button onClick={login}>LogIn</button>
         </>
     );
 }
