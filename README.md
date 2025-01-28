@@ -1,4 +1,4 @@
-# Bolus Calculator
+# Bolus Calculator https://leonjoyce88.github.io/BolusCalc/
 
 This calculator is to aid people with diabetes in dosing descisions for their mealtime insulin.
 
