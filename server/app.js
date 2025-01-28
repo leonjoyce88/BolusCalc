@@ -17,6 +17,7 @@ let currentData = null
 app.get("/", (req, res) => {
     if (currentData == null || (currentData && ((Date.now() - currentData[0].timestamp) / 60000) > 5)) {
         client.getEstimatedGlucoseValues().then((data) => {
+            console.log("fetched data")
             currentData = data
             res.send(data)
         }

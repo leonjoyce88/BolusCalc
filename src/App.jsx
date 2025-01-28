@@ -15,30 +15,19 @@ function App() {
     const [target, setTarget] = useState(6)
     const [carbs, setCarbs] = useState(0)
     const [bolus, setBolus] = useState('')
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
 
     useEffect(() => {
-        getMmol()
-        console.log('fetch')
-    }, [])
-
-    useEffect(() => {
-        if ((Date.now() - time) >= 300000 || time != '') {
-            getMmol()
+        if (time == '' || (Date.now() - time) >= 300000) {
+            fetch('https://boluscalc-production.up.railway.app')
+                .then(res => res.json())
+                .then(data => {
+                    setMmol(data[0].mmol)
+                    setTime(data[0].timestamp)
+                    setTrend(data[0].trend)
+                })
         }
         calculateBolus()
     }, [mmol, ratio, factor, target, carbs, bolus])
-
-    function getMmol() {
-        fetch('https://boluscalc-production.up.railway.app')
-            .then(res => res.json())
-            .then(data => {
-                setMmol(data[0].mmol)
-                setTime(data[0].timestamp)
-                setTrend(data[0].trend)
-            })
-    }
 
     const calculateBolus = () => {
         let correction = (mmol - target) / factor
@@ -69,10 +58,6 @@ function App() {
             <input type='number' value={carbs} onChange={e => setCarbs(e.target.value)}></input>
 
             <h1>Bolus: {bolus}</h1>
-            <p>Username</p>
-            <input type='email' value={username} onChange={e => setUsername(e.target.value)}></input>
-            <p>Password</p>
-            <input type='password' value={password} onChange={e => setPassword(e.target.value)}></input>
         </>
     );
 }
