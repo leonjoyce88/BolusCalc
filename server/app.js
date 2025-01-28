@@ -14,13 +14,10 @@ let client = new DexcomClient({
 
 let currentData = null
 
-app.get("/status", (req, res) => {
+app.get("/", (req, res) => {
     if (currentData == null || (currentData && ((Date.now() - currentData[0].timestamp) / 60000) > 5)) {
         client.getEstimatedGlucoseValues().then((data) => {
             currentData = data
-            console.log('fetch')
-            console.log(currentData[0])
-            console.log((Date.now() - currentData[0].timestamp) / 60000)
             res.send(data)
         }
         )

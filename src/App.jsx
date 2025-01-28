@@ -31,7 +31,7 @@ function App() {
     }, [mmol, ratio, factor, target, carbs, bolus])
 
     function getMmol() {
-        fetch('https://boluscalc-production.up.railway.app/status')
+        fetch('https://boluscalc-production.up.railway.app')
             .then(res => res.json())
             .then(data => {
                 setMmol(data[0].mmol)
