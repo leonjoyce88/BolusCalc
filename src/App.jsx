@@ -82,8 +82,7 @@ function App() {
                 <div className="trend-time-row">
                     <span className="trend-label">Trend:</span>
                     <span>{reading.trend ? reading.trend : "Waiting for Data"}</span>
-                    <span className="time-label">Time:</span>
-                    <span>{reading.timestamp ? new Date(reading.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " " + minutesFromReading + (minutesFromReading == 1 ? " minute " : " minutes ") + "ago" : 'Waiting for Data'}</span>
+                    <span>{reading.timestamp ? minutesFromReading + (minutesFromReading == 1 ? " minute " : " minutes ") + "ago" : 'Waiting for Data'}</span>
                 </div>
             </div>
 
