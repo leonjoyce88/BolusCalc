@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
+import TopInfo from './components/TopInfo.jsx';
+import Inputs from './components/Inputs.jsx';
+import Bolus from './components/Bolus.jsx';
 
 const RetryFetchDelay = 2000
 const MinutesInMs = 60000
@@ -69,49 +72,21 @@ function App() {
         }
     }, []);
 
-    const minutesFromReading = Math.trunc((Date.now() - reading.timestamp) / MinutesInMs)
 
     return (
         <>
-            <div className="top-info">
-                <div className="form-row">
-                    <label htmlFor="blood-glucose">Current Blood Glucose:</label>
-                    <input id="blood-glucose" type="number" value={reading ? reading.mmol : "6"} onChange={e => setReading({ ...reading, mmol: e.target.value })} />
-                </div>
-
-                <div className="trend-time-row">
-                    <span className="trend-label">Trend:</span>
-                    <span>{reading.trend ? reading.trend : "Waiting for Data"}</span>
-                    <span>{reading.timestamp ? minutesFromReading + (minutesFromReading == 1 ? " minute " : " minutes ") + "ago" : 'Waiting for Data'}</span>
-                </div>
-            </div>
-
-            <div className="container">
-                <div className="form-row">
-                    <label htmlFor="carb-ratio">Carb ratio (grams/unit):</label>
-                    <input id="carb-ratio" type="number" value={ratio} onChange={e => setRatio(e.target.value)} />
-                </div>
-
-                <div className="form-row">
-                    <label htmlFor="correction-factor">Correction Factor (mmol/unit):</label>
-                    <input id="correction-factor" type="number" value={factor} onChange={e => setFactor(e.target.value)} />
-                </div>
-
-                <div className="form-row">
-                    <label htmlFor="target">Target mmol:</label>
-                    <input id="target" type="number" value={target} onChange={e => setTarget(e.target.value)} placeholder="Enter target mmol" />
-                </div>
-
-                <div className="form-row">
-                    <label htmlFor="meal-carbs">Meal Carbs (grams):</label>
-                    <input id="meal-carbs" type="number" value={carbs} onChange={e => setCarbs(e.target.value)} />
-                </div>
-            </div>
-
-            <div className="bolus-result">
-                {/*<h1>{bolus ? (bolus + " units") : "None"}</h1>*/}
-                <h1>{bolus() + " units"}</h1>
-            </div>
+            <TopInfo reading={reading} setReading={setReading} />
+            <Inputs
+                ratio={ratio}
+                factor={factor}
+                target={target}
+                carbs={carbs}
+                setRatio={setRatio}
+                setFactor={setFactor}
+                setTarget={setTarget}
+                setCarbs={setCarbs}
+            />
+            <Bolus bolus={bolus} />
         </>
     );
 
