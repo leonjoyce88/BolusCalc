@@ -30,12 +30,12 @@ function App() {
     const fetchData = async () => {
         try {
             const res = await fetch('https://boluscalc-production.up.railway.app')
-            const result = await res.json()
-            setReading(result[0])
+            const currentReading = await res.json()
+            setReading(currentReading)
 
-            console.log("Fetched data at", new Date(result[0].timestamp).toLocaleString())
+            console.log("Fetched data at", new Date(currentReading.timestamp).toLocaleString())
 
-            const nextReadingTimestamp = (result[0].timestamp + (DexcomReadingInterval) + 2000)
+            const nextReadingTimestamp = (currentReading.timestamp + (DexcomReadingInterval) + 2000)
             const msToNextReading = nextReadingTimestamp - new Date()
 
             clearTimeout(timeoutRef.current)

@@ -15,14 +15,16 @@ if (!client) {
     console.log("login failed")
 }
 
+const MinInMs = 60000
+
 let currentData = null
 
 app.get("/", (req, res) => {
-    if (currentData == null || (currentData && ((Date.now() - currentData[0].timestamp) / 60000) > 5)) {
+    if (currentData == null || ((Date.now() - currentData[0].timestamp) / MinInMs) > 5) {
         client.getEstimatedGlucoseValues().then((data) => {
             console.log("fetched data")
-            currentData = data
-            res.send(data)
+            currentData = data[0]
+            res.send(data[0])
         }
         )
     } else {
