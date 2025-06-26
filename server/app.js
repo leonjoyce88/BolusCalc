@@ -11,6 +11,9 @@ let client = new DexcomClient({
     password: process.env.PASSWORD,
     server: 'eu',
 });
+if (!client) {
+    console.log("login failed")
+}
 
 let currentData = null
 
