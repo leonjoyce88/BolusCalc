@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
-import { DexcomClient } from 'dexcom-share-api';
-
+const RetryFetchDelay = 2000
+const MinutesInMs = 60000
+const DexcomReadingInterval = 5 * MinutesInMs
 
 function App() {
-    const [reading, setReading] = useState({ mmol: 6 })
+    const [reading, setReading] = useState({ mmol: 6, timestamp: new Date() })
     const [ratio, setRatio] = useState(40)
     const [factor, setFactor] = useState(6)
     const [target, setTarget] = useState(6)
     const [carbs, setCarbs] = useState(0)
+
     const bolus = () => {
         let correction = (reading.mmol - target) / factor
         let meal = carbs / ratio
@@ -24,16 +24,51 @@ function App() {
         }
 
     }
-    useEffect(() => {
-        if (!reading.time || (reading && (Date.now() - reading.timestamp) >= 300000)) {
-            fetch('https://boluscalc-production.up.railway.app')
-                .then(res => res.json())
-                .then(data => {
-                    setReading(data[0])
-                })
-        }
-    }, [ratio, factor, target, carbs])
+    const timeoutRef = useRef(null)
+    const intervalRef = useRef(null)
 
+    const fetchData = async () => {
+        try {
+            const res = await fetch('https://boluscalc-production.up.railway.app')
+            const result = await res.json()
+            setReading(result[0])
+
+            console.log("Fetched data at", new Date(result[0].timestamp).toLocaleString())
+
+            const nextReadingTimestamp = (result[0].timestamp + (DexcomReadingInterval) + 2000)
+            const msToNextReading = nextReadingTimestamp - new Date()
+
+            clearTimeout(timeoutRef.current)
+
+            if (msToNextReading > 0) {
+                console.log("Scheduling next fetch in ", msToNextReading / 1000, " seconds")
+
+                timeoutRef.current = setTimeout(() => {
+                    fetchData();
+                }, msToNextReading)
+
+            } else {
+                console.log("Failed to fetch new data trying again in ", RetryFetchDelay / 1000, " seconds")
+                timeoutRef.current = setTimeout(() => {
+                    fetchData();
+                }, RetryFetchDelay)
+            }
+
+        } catch (error) {
+            console.error("fetch failed")
+        }
+    };
+
+
+    useEffect(() => {
+        fetchData();
+        return () => {
+            clearTimeout(timeoutRef.current);
+            clearInterval(intervalRef.current);
+        }
+    }, []);
+
+    const minutesFromReading = Math.trunc((Date.now() - reading.timestamp) / MinutesInMs)
 
     return (
         <>
@@ -47,7 +82,7 @@ function App() {
                     <span className="trend-label">Trend:</span>
                     <span>{reading.trend ? reading.trend : "Waiting for Data"}</span>
                     <span className="time-label">Time:</span>
-                    <span>{reading.timestamp ? new Date(reading.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " " + Math.trunc((Date.now() - reading.timestamp) / 60000) + " minutes ago" : 'Waiting for Data'}</span>
+                    <span>{reading.timestamp ? new Date(reading.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " " + minutesFromReading + (minutesFromReading == 1 ? " minute " : " minutes ") + "ago" : 'Waiting for Data'}</span>
                 </div>
             </div>
 
