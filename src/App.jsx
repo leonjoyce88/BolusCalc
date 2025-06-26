@@ -30,7 +30,8 @@ function App() {
     const fetchData = async () => {
         try {
             const res = await fetch('https://boluscalc-production.up.railway.app')
-            const currentReading = await res.json()
+            const result = await res.json()
+            const currentReading = result[0]
             setReading(currentReading)
 
             console.log("Fetched data at", new Date(currentReading.timestamp).toLocaleString())

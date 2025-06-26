@@ -23,8 +23,8 @@ app.get("/", (req, res) => {
     if (currentData == null || ((Date.now() - currentData[0].timestamp) / MinInMs) > 5) {
         client.getEstimatedGlucoseValues().then((data) => {
             console.log("fetched data")
-            currentData = data[0]
-            res.send(data[0])
+            currentData = data
+            res.send(data)
         }
         )
     } else {
