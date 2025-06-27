@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MinutesInMs = 60000
 const TopInfo = ({ reading, setReading }) => {
@@ -14,18 +14,24 @@ const TopInfo = ({ reading, setReading }) => {
 
         update();//update on new reading
 
-        const timeToNextMinute = 60000 + (reading.timestamp - Date.now()) % 60000;
+        const timeToNextMinute = 61000 + (reading.timestamp - Date.now()) % 60000;
+
+        const timeoutRef = useRef(null)
+        const intervalRef = useRef(null)
+
+        clearTimeout(timeoutRef)
+        clearInterval(intervalRef)
 
         //set initial timeout to sync with readings
-        const timeoutId = setTimeout(() => {
+        timeoutRef = setTimeout(() => {
             update();
 
-            const intervalId = setInterval(update, 60000); //set future updates every minute from first
+            intervalRef = setInterval(update, 60000); //set future updates every minute from first
 
-            return () => clearInterval(intervalId)
+            return () => clearInterval(intervalRef)
         }, timeToNextMinute)
 
-        return () => clearTimeout(timeoutId)
+        return () => clearTimeout(timeoutRef)
 
     }, [reading])
 

@@ -43,8 +43,6 @@ function App() {
             const currentReading = result[0]
             setReading(currentReading)
 
-            console.log("Fetched data at", new Date(currentReading.timestamp).toLocaleString())
-
             const nextReadingTimestamp = (currentReading.timestamp + (DexcomReadingInterval) + 2000)
             const msToNextReading = nextReadingTimestamp - new Date()
 
