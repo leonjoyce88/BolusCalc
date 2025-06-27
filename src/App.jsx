@@ -49,7 +49,7 @@ function App() {
 
             clearTimeout(timeoutRef.current)
             const nextExpectedReading = (newReading.timestamp + (DexcomReadingInterval))
-            const delay = Math.max(nextExpectedReading - Date.now(), 1000)
+            const delay = nextExpectedReading - Date.now()
 
             if (isNewData) {
                 setReading(newReading)
