@@ -34,7 +34,6 @@ function App() {
     }
 
     const timeoutRef = useRef(null)
-    const intervalRef = useRef(null)
 
     const fetchData = async () => {
         try {
@@ -72,7 +71,6 @@ function App() {
         fetchData();
         return () => {
             clearTimeout(timeoutRef.current);
-            clearInterval(intervalRef.current);
         }
     }, []);
 
