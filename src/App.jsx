@@ -9,7 +9,7 @@ const MinutesInMs = 60000
 const DexcomReadingInterval = 5 * MinutesInMs
 
 function App() {
-    const [reading, setReading] = useState({ mmol: 6, timestamp: new Date() })
+    const [reading, setReading] = useState({ mmol: 6 })
     const [formData, setFormData] = useState({ ratio: 30, factor: 6, target: 6, carbs: 0 })
 
     const handleFormChange = (field) => (e) => {
@@ -19,6 +19,7 @@ function App() {
             [field]: value === "" ? "" : parseFloat(value),
         }))
     }
+
     const bolus = () => {
         let correction = (reading.mmol - formData.target) / formData.factor
         let meal = formData.carbs / formData.ratio
@@ -31,6 +32,7 @@ function App() {
         }
 
     }
+
     const timeoutRef = useRef(null)
     const intervalRef = useRef(null)
 
@@ -80,9 +82,7 @@ function App() {
     return (
         <>
             <TopInfo reading={reading} setReading={setReading} />
-            <Inputs
-                formData={formData} handleFormChange={handleFormChange}
-            />
+            <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolus} />
         </>
     );
