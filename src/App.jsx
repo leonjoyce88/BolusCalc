@@ -4,7 +4,8 @@ import TopInfo from './components/TopInfo.jsx';
 import Inputs from './components/Inputs.jsx';
 import Bolus from './components/Bolus.jsx';
 
-const RetryFetchDelay = 2000
+const RetryFetchDelay = 5000
+const RetryWindow = 15000
 const MinutesInMs = 60000
 const DexcomReadingInterval = 5 * MinutesInMs
 
@@ -16,13 +17,16 @@ function App() {
         const value = e.target.value;
         setFormData((prev) => ({
             ...prev,
-            [field]: value === "" ? "" : parseFloat(value),
+            [field]: value === "" ? "" : Number(value) || 0,
         }))
     }
 
     const bolus = () => {
-        let correction = (reading.mmol - formData.target) / formData.factor
-        let meal = formData.carbs / formData.ratio
+        const { mmol } = reading
+        const { target, factor, carbs, ratio } = formData
+
+        let correction = (mmol - target) / factor
+        let meal = carbs / ratio
         let total = Math.trunc(2 * (correction + meal)) / 2;
 
         if (total < 0.5 || isNaN(total)) {
@@ -30,39 +34,51 @@ function App() {
         } else {
             return (total)
         }
-
     }
 
     const timeoutRef = useRef(null)
+    const retryStartTimeRef = useRef(null)
 
     const fetchData = async () => {
         try {
             const res = await fetch('https://boluscalc-production.up.railway.app')
             const result = await res.json()
-            const currentReading = result[0]
-            setReading(currentReading)
+            const newReading = result[0]
 
-            const nextReadingTimestamp = (currentReading.timestamp + (DexcomReadingInterval) + 2000)
-            const msToNextReading = nextReadingTimestamp - new Date()
+            const isNewData = newReading.timestamp !== reading.timestamp
 
             clearTimeout(timeoutRef.current)
+            const nextExpectedReading = (newReading.timestamp + (DexcomReadingInterval))
+            const delay = Math.max(nextExpectedReading - Date.now(), 1000)
 
-            if (msToNextReading > 0) {
-                console.log("Scheduling next fetch in ", msToNextReading / 1000, " seconds")
+            if (isNewData) {
+                setReading(newReading)
+                retryStartTimeRef.current = null
 
-                timeoutRef.current = setTimeout(() => {
-                    fetchData();
-                }, msToNextReading)
+                console.log(" New Reading Scheduling next fetch in ", delay / 1000, " seconds")
+                timeoutRef.current = setTimeout(fetchData, delay)
 
             } else {
-                console.log("Failed to fetch new data trying again in ", RetryFetchDelay / 1000, " seconds")
-                timeoutRef.current = setTimeout(() => {
-                    fetchData();
-                }, RetryFetchDelay)
+                const now = Date.now()
+
+                if (!retryStartTimeRef.current) {
+                    retryStartTimeRef.current = now
+                }
+
+                const elapsedRetryTime = now - retryStartTimeRef.current
+
+                if (elapsedRetryTime < RetryWindow) {
+                    console.log("Reading unchanged retrying in ", RetryFetchDelay / 1000, "s")
+                    timeoutRef.current = setTimeout(fetchData, RetryFetchDelay)
+                } else {
+                    console.warn("No new data after 15s. Waiting until next 5 minute interval in", delay / 1000, "s")
+                    timeoutRef.current = setTimeout(fetchData, delay)
+                }
             }
 
         } catch (error) {
-            console.error("fetch failed")
+            console.error("fetch failed trying again in ", RetryFetchDelay, "s")
+            timeoutRef.current = setTimeout(fetchData, RetryFetchDelay)
         }
     };
 
