@@ -1,5 +1,11 @@
+import { FormData } from "../types/form";
 
-const Inputs = ({ formData, handleFormChange }) => {
+interface InputsProps {
+    formData: FormData;
+    handleFormChange: (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const Inputs: React.FC<InputsProps> = ({ formData, handleFormChange }) => {
     return (
         <div className="container">
             <div className="form-row">
