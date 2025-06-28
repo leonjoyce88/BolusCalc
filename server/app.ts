@@ -114,7 +114,7 @@ const waitForNewData = async (): Promise<GlucoseEntry[]> => {
     return pendingUpdatePromise
 }
 
-app.get("/new", async (_req, res) => {
+app.get("/new", async (_req: any, res: any) => {
     console.log("[/new] request recieved")
     if (!currentData) {
         return res.status(404).send({ error: "no cached data yet" })
@@ -126,7 +126,7 @@ app.get("/new", async (_req, res) => {
     res.send(currentData)
 })
 
-app.get("/update", async (_req, res) => {
+app.get("/update", async (_req: any, res: any) => {
     console.log("[/update] update request recieved")
     try {
         const data = await waitForNewData()
