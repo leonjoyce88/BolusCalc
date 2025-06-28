@@ -35,7 +35,11 @@ fetchData().then(data => currentData = data)
 let pendingUpdatePromise = null
 
 const waitForNewData = () => {
-    if (pendingUpdatePromise) return pendingUpdatePromise
+    if (pendingUpdatePromise) {
+        console.log("promise of data")
+        return pendingUpdatePromise
+    }
+    console.log("make new promise")
 
     pendingUpdatePromise = new Promise(async (resolve) => {
         if (!currentData) {
@@ -75,8 +79,8 @@ const waitForNewData = () => {
         }
 
         console.log("No new data after retries, returning cached data");
-        resolve(currentData);
         pendingUpdatePromise = null
+        resolve(currentData);
     })
 
 }
