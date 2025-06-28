@@ -63,8 +63,9 @@ const waitForNewData = () => {
             if (newData && newData[0].timestamp !== lastTimestamp) {
                 console.log("New data received!");
                 currentData = newData;
+                resolve(newData);
                 pendingUpdatePromise = null
-                return resolve(newData);
+                return
             }
 
             if (attempt < 3) {
@@ -74,8 +75,8 @@ const waitForNewData = () => {
         }
 
         console.log("No new data after retries, returning cached data");
-        pendingUpdatePromise = null
         resolve(currentData);
+        pendingUpdatePromise = null
     })
 
 }
