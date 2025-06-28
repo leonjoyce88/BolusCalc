@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import './App.css'
 import TopInfo from './components/TopInfo.jsx';
 import Inputs from './components/Inputs.jsx';
@@ -16,7 +16,7 @@ function App() {
         }))
     }
 
-    const bolus = () => {
+    const bolusValue = useMemo(() => {
         const { mmol } = reading
         const { target, factor, carbs, ratio } = formData
 
@@ -25,28 +25,28 @@ function App() {
         let total = Math.trunc(2 * (correction + meal)) / 2;
 
         if (total < 0.5 || isNaN(total)) {
-            return (0)
-        } else {
-            return (total)
+            return 0
         }
-    }
+        return total
+    }, [reading, formData])
 
     useEffect(() => {
-        let cancelled = false
+        const controller = new AbortController()
 
         const longFetch = async () => {
             try {
                 console.log("started long polling fetch")
                 const res = await fetch('https://boluscalc-production.up.railway.app/update')
                 const result = await res.json()
-                const newReading = result[0]
                 console.log("recieved long polling response")
-                if (!cancelled) {
-                    setReading(newReading)
+                if (!controller.signal.aborted) {
+                    setReading(result[0])
                     longFetch()
                 }
             } catch (error) {
-                console.log("Long polling error", error)
+                if (error.name !== 'AbortError') {
+                    console.log("Long polling error", error)
+                }
             }
         }
 
@@ -59,14 +59,16 @@ function App() {
                 setReading(newReading)
                 longFetch()
             } catch (error) {
-                console.error("fetch failed")
+                if (error.name !== 'AbortError') {
+                    console.error("fetch failed")
+                }
             }
         };
 
         fetchNewData();
 
         return () => {
-            cancelled = true
+            controller.abort;
         }
     }, []);
 
@@ -74,7 +76,7 @@ function App() {
         <>
             <TopInfo reading={reading} setReading={setReading} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
-            <Bolus bolus={bolus} />
+            <Bolus bolus={bolusValue} />
         </>
     );
 }
