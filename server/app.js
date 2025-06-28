@@ -98,7 +98,7 @@ app.get("/update", async (_req, res) => {
         console.log(data[0])
         res.send(data)
     } catch (error) {
-        console.error("Error in /update")
+        console.error("Error in /update", error)
         res.status(500).send({ error: "failed to fetch data" })
     }
 })
