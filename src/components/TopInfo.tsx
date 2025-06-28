@@ -1,18 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Reading, ReadingField } from "../types/reading";
 
 const MinutesInMs = 60000
-const TopInfo = ({ reading = {}, setReading }) => {
-    const [minAgo, setMinAgo] = useState(null);
-    const timeoutRef = useRef(null)
+interface TopInfoProps {
+    reading: Reading;
+    setReading: React.Dispatch<React.SetStateAction<Reading>>;
+}
+const TopInfo: React.FC<TopInfoProps> = ({ reading, setReading }) => {
+    const [minAgo, setMinAgo] = useState<Number | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
     useEffect(() => {
-        if (!reading.timestamp) return
+        const timestamp = reading.timestamp;
+        if (!timestamp) return
 
         const update = () => {
-            const minutesFromReading = Math.trunc((Date.now() - reading.timestamp) / MinutesInMs)
+            const minutesFromReading = Math.trunc((Date.now() - timestamp) / MinutesInMs)
             setMinAgo(minutesFromReading)
 
-            const timeToNextMinute = 61000 + (reading.timestamp - Date.now()) % 60000;
+            const timeToNextMinute = 61000 + (timestamp - Date.now()) % 60000;
 
             clearTimeout(timeoutRef.current)
 
@@ -28,7 +34,7 @@ const TopInfo = ({ reading = {}, setReading }) => {
         <div className="top-info">
             <div className="form-row">
                 <label htmlFor="blood-glucose">Current Blood Glucose:</label>
-                <input id="blood-glucose" type="number" value={reading?.mmol ?? 6} onChange={e => setReading({ ...reading, mmol: e.target.value })} />
+                <input id="blood-glucose" type="number" value={reading?.mmol ?? 6} onChange={e => setReading({ ...reading, mmol: Number(e.target.value) })} />
             </div>
 
             <div className="trend-time-row">
