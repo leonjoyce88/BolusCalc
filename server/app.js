@@ -63,6 +63,7 @@ const waitForNewData = () => {
             if (newData && newData[0].timestamp !== lastTimestamp) {
                 console.log("New data received!");
                 currentData = newData;
+                pendingUpdatePromise = null
                 return resolve(newData);
             }
 
@@ -73,6 +74,7 @@ const waitForNewData = () => {
         }
 
         console.log("No new data after retries, returning cached data");
+        pendingUpdatePromise = null
         resolve(currentData);
     })
 
@@ -91,7 +93,7 @@ app.get("/update", async (_req, res) => {
         res.send(data)
     } catch (error) {
         console.error("Error in /update")
-        res.status.send({ error: "failed to fetch data" })
+        res.status(500).send({ error: "failed to fetch data" })
     }
 })
 
