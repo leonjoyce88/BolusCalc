@@ -50,7 +50,7 @@ const waitForNewData = async () => {
         const lastTimestamp = currentData[0].timestamp
         const now = Date.now()
         const nextExpectedReadingTime = lastTimestamp + MinInMs * 5
-        let waitTime = nextExpectedReadingTime + 2000 - now
+        let waitTime = nextExpectedReadingTime + 1000 - now
 
         while (waitTime < 0) {
             waitTime += 5 * MinInMs
