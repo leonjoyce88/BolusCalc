@@ -14,15 +14,15 @@ let client = new DexcomClient({
 
 const MinInMs = 60000
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 const fetchData = async () => {
     try {
         const data = await client.getEstimatedGlucoseValues()
-        console.log("fetched data ", (Date.now() - data[0].timestamp) / 1000, "s from reading")
+        console.log("[fetchData] fetched data ", (Date.now() - data[0].timestamp) / 1000, "s from reading")
         return (data)
     } catch (error) {
-        console.error("error fetching data:", error)
+        console.error("[fetchData] error fetching data:", error)
         return null
     }
 }
@@ -34,12 +34,12 @@ fetchData().then(data => currentData = data)
 
 let pendingUpdatePromise = null
 
-const waitForNewData = () => {
+const waitForNewData = async () => {
     if (pendingUpdatePromise) {
-        console.log("promise of data")
+        console.log("[waitForNewData] returning promise")
         return pendingUpdatePromise
     }
-    console.log("make new promise")
+    console.log("[waitForNewData] making new promise")
 
     pendingUpdatePromise = new Promise(async (resolve) => {
         if (!currentData) {
@@ -57,31 +57,33 @@ const waitForNewData = () => {
             waitTime += 5 * MinInMs
         }
 
-        console.log("Waiting for data in", waitTime / 1000, "s")
+        console.log("[waitForNewData] Waiting for data in", waitTime / 1000, "s")
         await sleep(waitTime)
 
         let newData = null;
         for (let attempt = 1; attempt <= 3; attempt++) {
+            console.log("[waitForNewData] fetch attempt :", attempt)
             newData = await fetchData();
 
             if (newData && newData[0].timestamp !== lastTimestamp) {
-                console.log("New data received!");
+                console.log("[waitForNewData] New data received!");
                 currentData = newData;
                 pendingUpdatePromise = null
-                resolve(newData);
-                return
+                return resolve(newData)
             }
 
             if (attempt < 3) {
-                console.log("No new data yet, retrying in 5 seconds");
-                await sleep(5000);
+                console.log("[waitForNewData] fetch failed trying again in 5s");
+                sleep(5000);
             }
         }
 
-        console.log("No new data after retries, returning cached data");
+        console.log("[waitForNewData] No new data. returning cached data");
         pendingUpdatePromise = null
         resolve(currentData);
     })
+
+    return pendingUpdatePromise
 
 }
 
@@ -93,9 +95,9 @@ app.get("/new", (_req, res) => {
 })
 
 app.get("/update", async (_req, res) => {
+    console.log("update recieved")
     try {
         const data = await waitForNewData()
-        console.log(data[0])
         res.send(data)
     } catch (error) {
         console.error("Error in /update", error)
