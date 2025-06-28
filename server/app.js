@@ -85,10 +85,13 @@ const waitForNewData = async () => {
     return pendingUpdatePromise
 }
 
-app.get("/new", (_req, res) => {
+app.get("/new", async (_req, res) => {
     console.log("[/new] request recieved")
     if (!currentData) {
         return res.status(404).send({ error: "no cached data yet" })
+    }
+    if (currentData.timestamp - Date.now() > 5 * MinInMs) {
+        currentData = await fetchData()
     }
     console.log("[/new] response sent")
     res.send(currentData)
