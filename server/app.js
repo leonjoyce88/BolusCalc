@@ -67,8 +67,8 @@ const waitForNewData = () => {
             if (newData && newData[0].timestamp !== lastTimestamp) {
                 console.log("New data received!");
                 currentData = newData;
-                resolve(newData);
                 pendingUpdatePromise = null
+                resolve(newData);
                 return
             }
 

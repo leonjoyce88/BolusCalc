@@ -44,6 +44,7 @@ function App() {
             try {
                 console.log("started long polling fetch")
                 const res = await fetch('https://boluscalc2-dev.up.railway.app/update')
+                console.log(res)
                 const result = await res.json()
                 const newReading = result[0]
                 console.log("recieved long polling response")
@@ -60,6 +61,7 @@ function App() {
             try {
                 const res = await fetch('https://boluscalc2-dev.up.railway.app/new')
                 const result = await res.json()
+                console.log(result)
                 const newReading = result[0]
                 setReading(newReading)
                 longFetch()
@@ -70,7 +72,7 @@ function App() {
         fetchNewData();
 
         return () => {
-            cancelled == true
+            cancelled = true
         }
     }, []);
 
