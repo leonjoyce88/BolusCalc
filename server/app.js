@@ -20,8 +20,7 @@ const MinInMs = 60000
 let currentData = null
 
 app.get("/", (req, res) => {
-    const readingAge = ((Date.now() - currentData[0].timestamp) / MinInMs)
-    if (currentData == null || readingAge > 5) {
+    if (currentData == null || ((Date.now() - currentData[0].timestamp) / MinInMs) > 5) {
         client.getEstimatedGlucoseValues().then((data) => {
             console.log("fetched data ", (Date.now() - data[0].timestamp) / 1000, "s from reading")
             currentData = data

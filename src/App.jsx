@@ -41,7 +41,7 @@ function App() {
 
     const fetchData = async () => {
         try {
-            const res = await fetch('https://boluscalc-production.up.railway.app')
+            const res = await fetch('https://boluscalc2-dev.up.railway.app/')
             const result = await res.json()
             const newReading = result[0]
 
