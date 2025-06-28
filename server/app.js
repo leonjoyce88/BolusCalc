@@ -31,42 +31,50 @@ let currentData = null
 
 fetchData().then(data => currentData = data)
 
-app.get("/", async (req, res) => {
-    const lastTimestamp = currentData?.[0]?.timestamp
-    if (!lastTimestamp) {
+app.get("/new", (req, res) => {
+    if (!currentData) {
+        return res.status(404).send({ error: "no cached data yet" })
+    }
+    res.send(currentData)
+})
+
+app.get("/update", async (req, res) => {
+    if (!currentData) {
         const data = await fetchData()
         currentData = data
         return res.send(data)
     }
 
+    const lastTimestamp = currentData[0].timestamp
     const now = Date.now()
-    const nextExpectedReadingTime = lastTimestamp + 5 * MinInMs;
-    const bufferMs = 3000
-    const waitTime = Math.max(0, nextExpectedReadingTime - now + bufferMs)
+    const nextExpectedReadingTime = lastTimestamp + MinInMs * 5
+    let waitTime = nextExpectedReadingTime + 2000 - now
 
-    if (waitTime > 0) {
-        console.log(`waiting${waitTime / 1000}s for next Dexcom reading`)
-        await sleep(waitTime)
+    while (waitTime < 0) {
+        waitTime += 5 * MinInMs
     }
-    let newData = null
 
+    console.log("Waiting for data in", waitTime / 1000, "s")
+    await sleep(waitTime)
+
+    let newData = null;
     for (let attempt = 1; attempt <= 3; attempt++) {
         newData = await fetchData();
 
-        if (newData && newData[0].timestamp !== currentData[0].timestamp) {
-            console.log("new data")
-            currentData = newData
-            return res.send(newData)
+        if (newData && newData[0].timestamp !== lastTimestamp) {
+            console.log("New data received!");
+            currentData = newData;
+            return res.send(newData);
         }
 
-        console.log("no new data waiting to retry")
-        await sleep(5000)
+        if (attempt < 3) {
+            console.log("No new data yet, retrying in 5 seconds");
+            await sleep(5000);
+        }
     }
 
-    console.log("new data not available. returning cached data")
-    return res.send(currentData)
-
-
+    console.log("No new data after retries, returning cached data");
+    res.send(currentData);
 })
 
 const PORT = process.env.PORT || 3000
