@@ -50,6 +50,9 @@ function App() {
             clearTimeout(timeoutRef.current)
             const nextExpectedReading = (newReading.timestamp + (DexcomReadingInterval))
             const delay = nextExpectedReading - Date.now()
+            while (delay < 0) {
+                delay += 5 * MinutesInMs
+            }
 
             if (isNewData) {
                 setReading(newReading)
