@@ -90,7 +90,7 @@ app.get("/new", async (_req, res) => {
     if (!currentData) {
         return res.status(404).send({ error: "no cached data yet" })
     }
-    if (currentData.timestamp - Date.now() > 5 * MinInMs) {
+    if (Date.now() - currentData.timestamp > 5 * MinInMs) {
         currentData = await fetchData()
     }
     console.log("[/new] response sent")
