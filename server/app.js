@@ -31,12 +31,11 @@ let currentData = null
 
 fetchData().then(data => currentData = data)
 
-
 let pendingUpdatePromise = null
 
 const waitForNewData = async () => {
     if (pendingUpdatePromise) {
-        console.log("[waitForNewData] returning promise")
+        console.log("[waitForNewData] returning existing promise")
         return pendingUpdatePromise
     }
     console.log("[waitForNewData] making new promise")
@@ -82,22 +81,24 @@ const waitForNewData = async () => {
         pendingUpdatePromise = null
         resolve(currentData);
     })
-
+    console.log("[waitForNewData] returning new promise")
     return pendingUpdatePromise
-
 }
 
 app.get("/new", (_req, res) => {
+    console.log("[/new] request recieved")
     if (!currentData) {
         return res.status(404).send({ error: "no cached data yet" })
     }
+    console.log("[/new] response sent")
     res.send(currentData)
 })
 
 app.get("/update", async (_req, res) => {
-    console.log("update recieved")
+    console.log("[/update] update request recieved")
     try {
         const data = await waitForNewData()
+        console.log("[/update] update response sent")
         res.send(data)
     } catch (error) {
         console.error("Error in /update", error)
