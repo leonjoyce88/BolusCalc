@@ -95,6 +95,7 @@ app.get("/new", (_req, res) => {
 app.get("/update", async (_req, res) => {
     try {
         const data = await waitForNewData()
+        console.log(data[0])
         res.send(data)
     } catch (error) {
         console.error("Error in /update")
