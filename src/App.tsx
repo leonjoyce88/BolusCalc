@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import './App.css'
 import TopInfo from './components/TopInfo.jsx';
 import Inputs from './components/Inputs.jsx';
@@ -38,45 +38,32 @@ function App() {
         return total
     }, [reading, formData])
 
+    const timeoutRef = useRef<number | null>(null)
     useEffect(() => {
-        const controller = new AbortController()
-
-        const longFetch = async () => {
+        const fetchData = async () => {
             try {
-                console.log("started long polling fetch")
-                const res = await fetch('https://boluscalc-production.up.railway.app/update')
+                const res = await fetch('http://localhost:3000/')
                 const result = await res.json()
-                console.log("recieved long polling response")
-                if (!controller.signal.aborted) {
-                    setReading(result[0] as Reading)
-                    longFetch()
-                }
-            } catch (error: any) {
-                if (error.name !== 'AbortError') {
-                    console.log("Long polling error", error)
-                }
-            }
-        }
+                const newReading: Reading = result[0]
 
-        const fetchNewData = async () => {
-            try {
-                const res = await fetch('https://boluscalc-production.up.railway.app/new')
-                const result = await res.json()
-                console.log(result)
-                const newReading = result[0]
                 setReading(newReading)
-                longFetch()
-            } catch (error: any) {
-                if (error.name !== 'AbortError') {
-                    console.error("fetch failed")
+
+                if (!newReading.timestamp) {
+                    throw new Error("no timestamp")
                 }
+
+                const nextReading = newReading.timestamp - Date.now() + (5 * 60 * 1000)
+                console.log("fetch next reading in", nextReading / 1000, "s")
+                timeoutRef.current = setTimeout(() => fetchData(), nextReading)
+            } catch (error: any) {
+                console.error("fetch failed")
             }
         };
-
-        fetchNewData();
-
+        fetchData();
         return () => {
-            controller.abort();
+            if (timeoutRef.current !== null) {
+                clearTimeout(timeoutRef.current)
+            }
         }
     }, []);
 
