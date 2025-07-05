@@ -51,7 +51,6 @@ function App() {
         const fetchData = async () => {
             try {
                 const res = await fetch('https://boluscalc-production.up.railway.app/new')
-                console.log(res)
                 if (!res.ok) {
                     if (res.status === 500) {
                         console.error("Server error: No glucose data available")
@@ -65,7 +64,7 @@ function App() {
                 if (result && result.timestamp) {
                     setReading(result)
                     const timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000)
-                    console.log("fetch next reading in", timeoutMs / 1000, "s")
+                    console.log("fetching next reading in", timeoutMs / 1000, "s")
                     timeoutRef.current = setTimeout(() => fetchData(), timeoutMs)
                 }
 
