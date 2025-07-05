@@ -1,6 +1,6 @@
 
 export interface Reading {
-    mmol: number;
+    mmol: number | "";
     timestamp?: number;
     trend?: string;
 }

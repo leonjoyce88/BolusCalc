@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import './App.css'
 import TopInfo from './components/TopInfo.jsx';
 import Inputs from './components/Inputs.jsx';
@@ -9,27 +9,34 @@ import { Reading } from './types/reading';
 
 
 function App() {
-    const [reading, setReading] = useState<Reading>({ mmol: 6 })
-    const [formData, setFormData] = useState<FormData>({ ratio: 30, factor: 6, target: 6, carbs: 0 })
+    const [reading, setReading] = useState<Reading | null>(null)
+    const [formData, setFormData] = useState<FormData>({ ratio: "30", factor: "6", target: "6", carbs: "0" })
 
     const handleFormChange = (field: FormField) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const raw = e.target.value;
-        const value = raw === "" ? "" : Number(raw);
+        const value = e.target.value;
         setFormData((prev) => ({
             ...prev,
-            [field]: isNaN(value as number) ? "" : value,
+            [field]: value,
         }))
+    }
+    const handleMmolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value;
+        const value = raw === "" ? "" : Number(raw);
+        setReading({
+            mmol: isNaN(value as number) ? "" : value,
+            timestamp: undefined,
+            trend: undefined
+        })
     }
 
     const bolusValue = useMemo(() => {
-        const { mmol } = reading
         const { target, factor, carbs, ratio } = formData
-        if (typeof target !== "number" || typeof factor !== "number" ||
-            typeof carbs !== "number" || typeof ratio !== "number"
-        ) { return 0 }
+        const mmol = reading?.mmol
+        if (typeof mmol !== "number"
+        ) { return null }
 
-        let correction = (mmol - target) / factor
-        let meal = carbs / ratio
+        let correction = (mmol - parseFloat(target)) / parseFloat(factor)
+        let meal = parseFloat(carbs) / parseFloat(ratio)
         let total = Math.trunc(2 * (correction + meal)) / 2;
 
         if (total < 0.5 || isNaN(total)) {
@@ -38,51 +45,46 @@ function App() {
         return total
     }, [reading, formData])
 
+    const timeoutRef = useRef<number | null>(null)
+
     useEffect(() => {
-        const controller = new AbortController()
-
-        const longFetch = async () => {
+        const fetchData = async () => {
             try {
-                console.log("started long polling fetch")
-                const res = await fetch('https://boluscalc-production.up.railway.app/update')
-                const result = await res.json()
-                console.log("recieved long polling response")
-                if (!controller.signal.aborted) {
-                    setReading(result[0] as Reading)
-                    longFetch()
+                const res = await fetch('http://boluscalc-production.up.railway.app/new')
+                console.log(res)
+                if (!res.ok) {
+                    if (res.status === 500) {
+                        console.error("Server error: No glucose data available")
+                    } else {
+                        console.error("unexpected error", res.status)
+                    }
+                    return
                 }
-            } catch (error: any) {
-                if (error.name !== 'AbortError') {
-                    console.log("Long polling error", error)
-                }
-            }
-        }
+                const result: Reading = await res.json()
 
-        const fetchNewData = async () => {
-            try {
-                const res = await fetch('https://boluscalc-production.up.railway.app/new')
-                const result = await res.json()
-                console.log(result)
-                const newReading = result[0]
-                setReading(newReading)
-                longFetch()
-            } catch (error: any) {
-                if (error.name !== 'AbortError') {
-                    console.error("fetch failed")
+                if (result && result.timestamp) {
+                    setReading(result)
+                    const timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000)
+                    console.log("fetch next reading in", timeoutMs / 1000, "s")
+                    timeoutRef.current = setTimeout(() => fetchData(), timeoutMs)
                 }
+
+            } catch (error: any) {
+                console.error("Error fetching data", error)
+                timeoutRef.current = setTimeout(() => fetchData(), 5000)
             }
         };
-
-        fetchNewData();
-
+        fetchData();
         return () => {
-            controller.abort();
+            if (timeoutRef.current !== null) {
+                clearTimeout(timeoutRef.current)
+            }
         }
     }, []);
 
     return (
         <>
-            <TopInfo reading={reading} setReading={setReading} />
+            <TopInfo reading={reading} handleMmolChange={handleMmolChange} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolusValue} />
         </>
