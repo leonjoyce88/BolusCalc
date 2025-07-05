@@ -14,13 +14,13 @@
     "dependencies": {
         "cors": "^2.8.5",
         "dexcom-share-api": "^1.0.8",
-        "dotenv": "^17.0.1",
         "express": "^4.21.2"
     },
     "devDependencies": {
         "@types/cors": "^2.8.19",
         "@types/express": "^4.17.23",
         "@types/node": "^24.0.10",
+        "dotenv": "^17.0.1",
         "ts-node": "^10.9.2",
         "typescript": "^5.8.3"
     }
