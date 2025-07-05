@@ -1,13 +1,14 @@
 import React from "react";
 
 interface BolusProps {
-    bolus: number;
+    bolus: number | null;
 }
 
 const Bolus: React.FC<BolusProps> = ({ bolus }) => {
+    console.log(bolus)
     return (
         <div className="bolus-result">
-            <h1>{bolus} units</h1>
+            <h1>{bolus != null ? bolus + "units" : "Invalid input"}</h1>
         </div>
     )
 }

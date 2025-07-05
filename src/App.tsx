@@ -10,17 +10,16 @@ import { Reading } from './types/reading';
 
 function App() {
     const [reading, setReading] = useState<Reading | null>(null)
-    const [formData, setFormData] = useState<FormData>({ ratio: 30, factor: 6, target: 6, carbs: 0 })
+    const [formData, setFormData] = useState<FormData>({ ratio: "30", factor: "6", target: "6", carbs: "0" })
 
     const handleFormChange = (field: FormField) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const raw = e.target.value;
-        const value = raw === "" ? "" : Number(raw);
+        const value = e.target.value;
         setFormData((prev) => ({
             ...prev,
-            [field]: isNaN(value as number) ? "" : value,
+            [field]: value,
         }))
     }
-    const handleMmolChange = () => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleMmolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const raw = e.target.value;
         const value = raw === "" ? "" : Number(raw);
         setReading({
@@ -32,13 +31,12 @@ function App() {
 
     const bolusValue = useMemo(() => {
         const { target, factor, carbs, ratio } = formData
-        if (typeof target !== "number" || typeof factor !== "number" ||
-            typeof carbs !== "number" || typeof ratio !== "number"
-        ) { return 0 }
-        const mmol = reading?.mmol ?? target
+        const mmol = reading?.mmol
+        if (typeof mmol !== "number"
+        ) { return null }
 
-        let correction = (mmol - target) / factor
-        let meal = carbs / ratio
+        let correction = (mmol - parseFloat(target)) / parseFloat(factor)
+        let meal = parseFloat(carbs) / parseFloat(ratio)
         let total = Math.trunc(2 * (correction + meal)) / 2;
 
         if (total < 0.5 || isNaN(total)) {
@@ -52,7 +50,7 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('http://localhost:3000/new')
+                const res = await fetch('http://boluscalc-production.up.railway.app/new')
                 console.log(res)
                 if (!res.ok) {
                     if (res.status === 500) {
@@ -62,22 +60,18 @@ function App() {
                     }
                     return
                 }
-                const result: Reading[] = await res.json()
+                const result: Reading = await res.json()
 
-                if (!Array.isArray(result) || result.length === 0) {
-                    throw new Error("Invalid glucose data recieved")
+                if (result && result.timestamp) {
+                    setReading(result)
+                    const timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000)
+                    console.log("fetch next reading in", timeoutMs / 1000, "s")
+                    timeoutRef.current = setTimeout(() => fetchData(), timeoutMs)
                 }
 
-                const newReading = result[0]
-                setReading(newReading)
-
-
-                if (!newReading.timestamp) throw new Error("no timestamp")
-                const nextReading = newReading.timestamp - Date.now() + (5 * 60 * 1000)
-                console.log("fetch next reading in", nextReading / 1000, "s")
-                timeoutRef.current = setTimeout(() => fetchData(), nextReading)
             } catch (error: any) {
                 console.error("Error fetching data", error)
+                timeoutRef.current = setTimeout(() => fetchData(), 5000)
             }
         };
         fetchData();

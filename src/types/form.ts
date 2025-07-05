@@ -1,8 +1,8 @@
 export interface FormData {
-    ratio: number | "";
-    factor: number | "";
-    target: number | "";
-    carbs: number | "";
+    ratio: string;
+    factor: string;
+    target: string;
+    carbs: string;
 }
 
 export type FormField = keyof FormData;
