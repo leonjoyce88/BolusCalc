@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Reading, ReadingField } from "../types/reading";
+import { Reading } from "../types/reading";
 
 const MinutesInMs = 60000
 interface TopInfoProps {
-    reading: Reading;
-    setReading: React.Dispatch<React.SetStateAction<Reading>>;
+    reading: Reading | null;
+    handleMmolChange: () => (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-const TopInfo: React.FC<TopInfoProps> = ({ reading, setReading }) => {
+const TopInfo: React.FC<TopInfoProps> = ({ reading, handleMmolChange }) => {
     const [minAgo, setMinAgo] = useState<Number | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
     useEffect(() => {
+        if (reading == null) return;
         const timestamp = reading.timestamp;
         if (!timestamp) return
 
@@ -34,7 +35,7 @@ const TopInfo: React.FC<TopInfoProps> = ({ reading, setReading }) => {
         <div className="top-info">
             <div className="form-row">
                 <label htmlFor="blood-glucose">Current Blood Glucose:</label>
-                <input id="blood-glucose" type="number" value={reading?.mmol ?? 6} onChange={e => setReading({ ...reading, mmol: Number(e.target.value) })} />
+                <input id="blood-glucose" type="number" value={reading?.mmol ?? 6} onChange={handleMmolChange()} />
             </div>
 
             <div className="trend-time-row">

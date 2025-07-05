@@ -9,7 +9,7 @@ import { Reading } from './types/reading';
 
 
 function App() {
-    const [reading, setReading] = useState<Reading>({ mmol: 6 })
+    const [reading, setReading] = useState<Reading | null>(null)
     const [formData, setFormData] = useState<FormData>({ ratio: 30, factor: 6, target: 6, carbs: 0 })
 
     const handleFormChange = (field: FormField) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,13 +20,22 @@ function App() {
             [field]: isNaN(value as number) ? "" : value,
         }))
     }
+    const handleMmolChange = () => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value;
+        const value = raw === "" ? "" : Number(raw);
+        setReading({
+            mmol: isNaN(value as number) ? "" : value,
+            timestamp: undefined,
+            trend: undefined
+        })
+    }
 
     const bolusValue = useMemo(() => {
-        const { mmol } = reading
         const { target, factor, carbs, ratio } = formData
         if (typeof target !== "number" || typeof factor !== "number" ||
             typeof carbs !== "number" || typeof ratio !== "number"
         ) { return 0 }
+        const mmol = reading?.mmol ?? target
 
         let correction = (mmol - target) / factor
         let meal = carbs / ratio
@@ -39,24 +48,36 @@ function App() {
     }, [reading, formData])
 
     const timeoutRef = useRef<number | null>(null)
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('http://localhost:3000/')
-                const result = await res.json()
-                const newReading: Reading = result[0]
+                const res = await fetch('http://localhost:3000/new')
+                console.log(res)
+                if (!res.ok) {
+                    if (res.status === 500) {
+                        console.error("Server error: No glucose data available")
+                    } else {
+                        console.error("unexpected error", res.status)
+                    }
+                    return
+                }
+                const result: Reading[] = await res.json()
 
-                setReading(newReading)
-
-                if (!newReading.timestamp) {
-                    throw new Error("no timestamp")
+                if (!Array.isArray(result) || result.length === 0) {
+                    throw new Error("Invalid glucose data recieved")
                 }
 
+                const newReading = result[0]
+                setReading(newReading)
+
+
+                if (!newReading.timestamp) throw new Error("no timestamp")
                 const nextReading = newReading.timestamp - Date.now() + (5 * 60 * 1000)
                 console.log("fetch next reading in", nextReading / 1000, "s")
                 timeoutRef.current = setTimeout(() => fetchData(), nextReading)
             } catch (error: any) {
-                console.error("fetch failed")
+                console.error("Error fetching data", error)
             }
         };
         fetchData();
@@ -69,7 +90,7 @@ function App() {
 
     return (
         <>
-            <TopInfo reading={reading} setReading={setReading} />
+            <TopInfo reading={reading} handleMmolChange={handleMmolChange} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolusValue} />
         </>

@@ -39,43 +39,79 @@ const MinInMs = 60000
 
 const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms))
 
-const fetchData = async () => {
-    try {
-        for (let attempt = 1; attempt <= 3; attempt++) {
-            const data = await client.getEstimatedGlucoseValues() as GlucoseEntry[]
+async function retry<T>(fn: () => Promise<T>, retries: number = 3, delayMs: number = 1000): Promise<T> {
+    let lastError: unknown;
 
-            if (currentData == null || (data && data.length > 0 && data[0].timestamp !== currentData[0].timestamp)) {
-                currentData = data;
-                console.log("[fetchData] fetched data ", (Date.now() - data[0].timestamp) / 1000, "s from reading")
-                return data;
-            }
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (error) {
+            lastError = error;
+            if (i < retries - 1)
+                await sleep(delayMs)
 
-            if (attempt < 3) {
-                console.log("[waitForNewData] fetch failed trying again in 5s");
-                await sleep(5000);
-            }
         }
-        throw new Error("no data after 3 attempts")
-    } catch (error) {
-        console.error("[fetchData] error fetching data:", error)
-        return null
     }
+    throw lastError;
+
+}
+
+const fetchData = async (previousData: GlucoseEntry[] | null, retries = 3, delayMs = 5000): Promise<GlucoseEntry[] | null> => {
+    return retry(async () => {
+        const data = await client.getEstimatedGlucoseValues()
+        if (!data || !data.length) {
+            throw new Error("No data recieved")
+        }
+
+        if (previousData && previousData[0].timestamp == data[0].timestamp) {
+            throw new Error("Data unchanged Retrying...")
+        }
+
+        console.log("[fetchData] fetched data ", (Date.now() - data[0].timestamp) / 1000, "s from reading")
+        return data?.length ? data : null;
+
+    }, retries, delayMs).catch((err) => {
+        console.error("[fetchData] error fetching data:", err)
+        return null
+    })
 }
 
 
 
 let currentData: GlucoseEntry[] | null = null
 
-fetchData().then(data => currentData = data)
+fetchData(currentData, 1, 0).then(data => { currentData = data ? data : currentData; })
 
-app.get("/", async (_req: any, res: any) => {
-    console.log("[/newTest] request recieved")
+app.get("/new", async (_req: any, res: any) => {
+    console.log("[/new] request recieved")
 
-    if (!currentData || Date.now() - currentData[0].timestamp > 5 * MinInMs) {
-        await fetchData()
+    const dataStale = !currentData || Date.now() - currentData[0].timestamp > 5 * MinInMs
+
+    if (dataStale) {
+        try {
+            const newData = await fetchData(currentData, 3, 5000)
+            if (newData) {
+                currentData = newData
+            }
+        } catch (error: any) {
+            console.error("[/new] Dexcom fetch error:", error)
+        }
     }
+
+    if (!currentData) {
+        return res.status(500).json({ error: "No glucose data avaliable" })
+    }
+
     console.log("[/newTest] response sent")
-    res.send(currentData)
+    res.status(200).json(currentData)
+})
+
+app.get("/error", async (_req: any, res: any) => {
+    console.log("[/error] request recieved")
+
+
+    console.log("[/error] response sent")
+    res.status(503).json({ error: "Unable to retrieve glucose data" })
 })
 
 const PORT = process.env.PORT || 3000
