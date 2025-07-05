@@ -50,7 +50,7 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('http://boluscalc-production.up.railway.app/new')
+                const res = await fetch('https://boluscalc-production.up.railway.app/new')
                 console.log(res)
                 if (!res.ok) {
                     if (res.status === 500) {
