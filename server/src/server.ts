@@ -45,7 +45,7 @@ const fetchData = async () => {
 
         if (Array.isArray(readings) && readings.length > 0) {
             cachedReading = readings[0]
-            console.log(`[fetchData] cached reading age:${(Date.now() - cachedReading.timestamp)} / 1000, s from reading`)
+            console.log(`[fetchData] cached reading age: ${(Date.now() - cachedReading.timestamp) / 1000}s`)
         }
     } catch (error: any) {
         console.error("Failed to fetch from dexcom", error)
