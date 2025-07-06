@@ -3,7 +3,7 @@
   background: linear-gradient(135deg, #3c5a78, #557a95);
   color: var(--color-text-bright);
   padding: 44px;
-  margin-top: 48px;
+  margin-top: 18px;
   border-radius: var(--border-radius-lg);
   box-shadow: 0 8px 24px var(--shadow-dark);
   display: flex;
