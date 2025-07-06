@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import './App.css'
+import './styles/globals.css'
 import TopInfo from './components/TopInfo.jsx';
 import Inputs from './components/Inputs.jsx';
 import Bolus from './components/Bolus.jsx';
