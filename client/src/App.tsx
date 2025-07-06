@@ -31,7 +31,10 @@ function App() {
 
     const bolusValue = useMemo(() => {
         const { target, factor, carbs, ratio } = formData
-        const mmol = reading?.mmol
+        let mmol = reading?.mmol
+        if (!mmol) {
+            mmol = parseFloat(target)
+        }
         if (typeof mmol !== "number"
         ) { return null }
 
@@ -82,11 +85,11 @@ function App() {
     }, []);
 
     return (
-        <>
+        <div className='app-wrapper'>
             <TopInfo reading={reading} handleMmolChange={handleMmolChange} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolusValue} />
-        </>
+        </div>
     );
 }
 export default App

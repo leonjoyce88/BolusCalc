@@ -1,3 +1,4 @@
+/* Root App Container */
 #root {
     max-width: 1280px;
     margin: 0 auto;
@@ -14,24 +15,36 @@ body {
     color: #e0e0e0;
 }
 
-/* Styling for the top section (glucose, trend, time) */
+/* App Wrapper – Central Column Layout */
+.app-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px 20px;
+    max-width: 640px;
+    margin: 0 auto 60px auto;
+    /* For mobile, we'll adjust height further */
+}
+
+/* Top Info Panel */
 .top-info {
     background-color: #1e1e1e;
-    padding: 10px 20px;
+    padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-/* Styling for Trend and Time (arranged horizontally and centered) */
+/* Trend + Time Display Row */
 .trend-time-row {
     display: flex;
     justify-content: center;
-    /* Center the trend and time together */
     align-items: center;
     gap: 15px;
     font-size: 14px;
-    /* Smaller font size for trend and time */
     color: #bbbbbb;
 }
 
@@ -40,30 +53,27 @@ body {
     font-weight: bold;
 }
 
-/* Container for Inputs and Content */
+/* Input Container */
 .container {
     display: grid;
     grid-template-columns: 1fr;
-    /* Default to single column on small screens */
     gap: 20px;
     padding: 20px;
 }
 
+/* Input Form Row */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 2fr;
-    /* Label on the left, input on the right */
     gap: 10px;
     align-items: center;
 }
 
-/* Larger input sizes */
+/* Inputs */
 input {
     width: 100%;
     padding: 20px;
-    /* Even more padding */
     font-size: 22px;
-    /* Larger font size */
     border: 1px solid #333;
     border-radius: 5px;
     background-color: #1e1e1e;
@@ -77,49 +87,54 @@ input:focus {
     box-shadow: 0 0 5px rgba(187, 134, 252, 0.5);
 }
 
-/* Hover effect on labels */
+/* Label Styling */
 label {
     font-weight: bold;
     color: #bbbbbb;
     cursor: pointer;
     transition: color 0.3s ease;
-    /* Smooth transition for color change */
 }
 
 label:hover {
     color: #bb86fc;
-    /* Change color to match theme on hover */
 }
 
-/* Styling for the bolus result at the bottom */
+/* Bolus Result Styling */
 .bolus-result {
-    background-color: #bb86fc;
-    padding: 30px;
-    /* Larger padding */
-    border-radius: 10px;
-    margin-top: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #bb86fc, #a273f8);
+    color: #121212;
+    padding: 40px;
+    border-radius: 12px;
+    margin-top: 40px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .bolus-result h1 {
     font-size: 56px;
-    /* Larger font for bolus result */
     margin: 0;
     font-weight: bold;
     color: #121212;
     text-align: center;
 }
 
-/* Responsive Styling */
+/* Optional Title for Bolus Section */
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4a0072;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Responsive Styling for Larger Screens */
 @media (min-width: 768px) {
     .container {
         grid-template-columns: 1fr 1fr;
-        /* Two columns for wider screens */
     }
 
     .form-row {
         grid-template-columns: 1fr 2fr;
-        /* Still label on the left, input on the right */
     }
 
     input {
@@ -135,7 +150,51 @@ label:hover {
     }
 }
 
-/* Button (optional, if you add one later) */
+/* Mobile-Specific Adjustments */
+@media (max-width: 767px) {
+    html, body {
+        height: auto;
+    }
+
+    .app-wrapper {
+        height: auto;
+        padding: 20px 10px;
+        margin: 0 auto;
+        gap: 20px;
+        overflow: visible;
+        justify-content: flex-start;
+    }
+
+    .top-info,
+    .container,
+    .bolus-result {
+        margin-bottom: 15px;
+        padding: 15px;
+    }
+
+    input {
+        padding: 15px;
+        font-size: 18px;
+    }
+
+    .trend-time-row {
+        font-size: 12px;
+    }
+
+    .bolus-result h1 {
+        font-size: 40px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    label, p {
+        font-size: 14px;
+    }
+}
+
+/* Button Styling (if used) */
 button {
     display: inline-block;
     padding: 10px 20px;
