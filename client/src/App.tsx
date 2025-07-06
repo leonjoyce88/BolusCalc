@@ -56,7 +56,7 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('http://localhost:3000/new')
+                const res = await fetch('https://boluscalc-production.up.railway.app/new')
                 if (!res.ok) {
                     if (res.status === 500) {
                         console.error("Server error: No glucose data available")
