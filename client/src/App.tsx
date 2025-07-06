@@ -12,6 +12,11 @@ function App() {
     const [reading, setReading] = useState<Reading | null>(null)
     const [formData, setFormData] = useState<FormData>({ ratio: "30", factor: "6", target: "6", carbs: "0" })
 
+    const [manualEntry, setManualEntry] = useState<boolean>(false)
+    const [manualMmol, setManualMmol] = useState<string>(formData.target)
+
+    useEffect(() => { console.log(manualEntry) }, [manualEntry])
+
     const handleFormChange = (field: FormField) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setFormData((prev) => ({
@@ -20,18 +25,16 @@ function App() {
         }))
     }
     const handleMmolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const raw = e.target.value;
-        const value = raw === "" ? "" : Number(raw);
-        setReading({
-            mmol: isNaN(value as number) ? "" : value,
-            timestamp: undefined,
-            trend: undefined
-        })
+        const value = e.target.value;
+        setManualMmol(value)
     }
 
     const bolusValue = useMemo(() => {
         const { target, factor, carbs, ratio } = formData
         let mmol = reading?.mmol
+        if (manualEntry) {
+            mmol = parseFloat(manualMmol)
+        }
         if (!mmol) {
             mmol = parseFloat(target)
         }
@@ -46,14 +49,14 @@ function App() {
             return 0
         }
         return total
-    }, [reading, formData])
+    }, [reading, formData, manualEntry, manualMmol])
 
     const timeoutRef = useRef<number | null>(null)
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('https://boluscalc-production.up.railway.app/new')
+                const res = await fetch('http://localhost:3000/new')
                 if (!res.ok) {
                     if (res.status === 500) {
                         console.error("Server error: No glucose data available")
@@ -86,7 +89,7 @@ function App() {
 
     return (
         <div className='app-wrapper'>
-            <TopInfo reading={reading} handleMmolChange={handleMmolChange} />
+            <TopInfo reading={reading} handleMmolChange={handleMmolChange} manualEntry={manualEntry} setManualEntry={setManualEntry} manualMmol={manualMmol} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolusValue} />
         </div>

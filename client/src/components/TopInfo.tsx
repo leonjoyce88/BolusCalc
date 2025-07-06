@@ -1,12 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Reading } from "../types/reading";
 
+import { Pencil, X } from "lucide-react"; // edit and close icons
+
 const MinutesInMs = 60000
 interface TopInfoProps {
     reading: Reading | null;
     handleMmolChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    manualEntry: boolean
+    setManualEntry: React.Dispatch<React.SetStateAction<boolean>>
+    manualMmol: string
 }
-const TopInfo: React.FC<TopInfoProps> = ({ reading, handleMmolChange }) => {
+const TopInfo: React.FC<TopInfoProps> = ({ reading, handleMmolChange, manualEntry, setManualEntry, manualMmol }) => {
     const [minAgo, setMinAgo] = useState<Number | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
@@ -35,7 +40,13 @@ const TopInfo: React.FC<TopInfoProps> = ({ reading, handleMmolChange }) => {
         <div className="top-info">
             <div className="form-row">
                 <label htmlFor="blood-glucose">Current Blood Glucose:</label>
-                <input id="blood-glucose" type="number" value={reading?.mmol ?? 6} onChange={handleMmolChange} />
+                <div className="input-icon-wrapper">
+                    <input id="blood-glucose" type="number" value={manualEntry ? manualMmol : (reading?.mmol ?? 6)} onChange={handleMmolChange} readOnly={!manualEntry} className={manualEntry ? "editable" : "readonly"} />
+                    <button onClick={() => setManualEntry(!manualEntry)}>
+                        {manualEntry ? <X /> : <Pencil />}
+                    </button>
+
+                </div>
             </div>
 
             <div className="trend-time-row">

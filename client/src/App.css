@@ -1,211 +1,288 @@
 /* Root App Container */
 #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: #22282e; /* Dark soft grey-blue */
 }
 
 /* General Styles */
 body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #121212;
-    color: #e0e0e0;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #22282e; /* Matches root */
+  color: #cfd8dc; /* Light grey-blue text */
 }
 
 /* App Wrapper – Central Column Layout */
 .app-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    padding: 40px 20px;
-    max-width: 640px;
-    margin: 0 auto 60px auto;
-    /* For mobile, we'll adjust height further */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 40px 20px;
+  max-width: 640px;
+  margin: 0 auto 60px auto;
 }
 
 /* Top Info Panel */
 .top-info {
-    background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  background-color: #2e3a47; /* Slightly lighter blue-grey */
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* Trend + Time Display Row */
+/* Input + Icon Button Layout */
+.input-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-icon-wrapper input {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* Icon Button */
+.icon-button {
+  width: 42px;
+  height: 42px;
+  background-color: #3c4a5a;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #89c2d9; /* Soft blue */
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.icon-button:hover {
+  background-color: #5588a3;
+  color: #e1f0fb;
+}
+
+.icon-button:focus {
+  outline: 2px solid #89c2d9;
+  outline-offset: 2px;
+}
+
+/* Input Styles */
+input {
+  width: 100%;
+  padding: 18px 20px;
+  font-size: 20px;
+  border: 1px solid #3c4a5a;
+  border-radius: 8px;
+  background-color: #2e3a47;
+  color: #cfd8dc;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #89c2d9;
+  box-shadow: 0 0 8px rgba(137, 194, 217, 0.6);
+}
+
+/* Editable */
+input.editable {
+  background-color: #2e3a47;
+  cursor: text;
+}
+
+input.editable:focus {
+  border-color: #89c2d9;
+  box-shadow: 0 0 8px rgba(137, 194, 217, 0.6);
+}
+
+/* Readonly */
+input.readonly {
+  background-color: #557a95; /* Muted steel blue */
+  color: #e1f0fb; /* Very light blue */
+  border: none;
+  font-weight: 600;
+  cursor: default;
+  box-shadow: none;
+}
+
+input.readonly:focus {
+  outline: none;
+}
+
+/* Trend + Time Row */
 .trend-time-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    font-size: 14px;
-    color: #bbbbbb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: #90a4ae; /* Muted light blue-grey */
 }
 
 .trend-time-row .trend-label,
 .trend-time-row .time-label {
-    font-weight: bold;
+  font-weight: 700;
 }
 
 /* Input Container */
 .container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  padding: 22px;
 }
 
 /* Input Form Row */
 .form-row {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
-    align-items: center;
-}
-
-/* Inputs */
-input {
-    width: 100%;
-    padding: 20px;
-    font-size: 22px;
-    border: 1px solid #333;
-    border-radius: 5px;
-    background-color: #1e1e1e;
-    color: #e0e0e0;
-    box-sizing: border-box;
-}
-
-input:focus {
-    outline: none;
-    border-color: #bb86fc;
-    box-shadow: 0 0 5px rgba(187, 134, 252, 0.5);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 14px;
+  align-items: center;
 }
 
 /* Label Styling */
 label {
-    font-weight: bold;
-    color: #bbbbbb;
-    cursor: pointer;
-    transition: color 0.3s ease;
+  font-weight: 600;
+  color: #b0bec5; /* Soft blue grey */
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 label:hover {
-    color: #bb86fc;
+  color: #89c2d9;
 }
 
 /* Bolus Result Styling */
 .bolus-result {
-    background: linear-gradient(135deg, #bb86fc, #a273f8);
-    color: #121212;
-    padding: 40px;
-    border-radius: 12px;
-    margin-top: 40px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(135deg, #3c5a78, #557a95); /* Soft blue gradient */
+  color: #e1f0fb;
+  padding: 44px;
+  border-radius: 14px;
+  margin-top: 48px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .bolus-result h1 {
-    font-size: 56px;
-    margin: 0;
-    font-weight: bold;
-    color: #121212;
-    text-align: center;
+  font-size: 54px;
+  margin: 0;
+  font-weight: 700;
+  color: #e1f0fb;
+  text-align: center;
 }
 
-/* Optional Title for Bolus Section */
+/* Optional Bolus Title */
 .section-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: #4a0072;
-    margin-bottom: 15px;
-    text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #89c2d9;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-/* Responsive Styling for Larger Screens */
+/* Responsive Styling */
 @media (min-width: 768px) {
-    .container {
-        grid-template-columns: 1fr 1fr;
-    }
+  .container {
+    grid-template-columns: 1fr 1fr;
+  }
 
-    .form-row {
-        grid-template-columns: 1fr 2fr;
-    }
+  .form-row {
+    grid-template-columns: 1fr 2fr;
+  }
 
-    input {
-        max-width: 100%;
-    }
+  input {
+    max-width: 100%;
+  }
 
-    p {
-        font-size: 18px;
-    }
+  p {
+    font-size: 18px;
+  }
 
-    h1 {
-        font-size: 28px;
-    }
+  h1 {
+    font-size: 28px;
+  }
 }
 
-/* Mobile-Specific Adjustments */
+/* Mobile Styling */
 @media (max-width: 767px) {
-    html, body {
-        height: auto;
-    }
+  html, body {
+    height: auto;
+  }
 
-    .app-wrapper {
-        height: auto;
-        padding: 20px 10px;
-        margin: 0 auto;
-        gap: 20px;
-        overflow: visible;
-        justify-content: flex-start;
-    }
+  .app-wrapper {
+    padding: 20px 12px;
+    margin: 0 auto;
+    gap: 24px;
+    overflow: visible;
+    justify-content: flex-start;
+  }
 
-    .top-info,
-    .container,
-    .bolus-result {
-        margin-bottom: 15px;
-        padding: 15px;
-    }
+  .top-info,
+  .container,
+  .bolus-result {
+    margin-bottom: 18px;
+    padding: 18px;
+  }
 
-    input {
-        padding: 15px;
-        font-size: 18px;
-    }
+  input {
+    padding: 16px;
+    font-size: 18px;
+  }
 
-    .trend-time-row {
-        font-size: 12px;
-    }
+  .trend-time-row {
+    font-size: 12px;
+  }
 
-    .bolus-result h1 {
-        font-size: 40px;
-    }
+  .bolus-result h1 {
+    font-size: 40px;
+  }
 
-    .section-title {
-        font-size: 18px;
-    }
+  .section-title {
+    font-size: 20px;
+  }
 
-    label, p {
-        font-size: 14px;
-    }
+  label, p {
+    font-size: 15px;
+  }
 }
 
-/* Button Styling (if used) */
+/* Button Styling */
 button {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #bb86fc;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  display: inline-block;
+  padding: 14px 28px;
+  font-size: 17px;
+  color: #22282e; /* Dark background text */
+  background-color: #89c2d9; /* Soft blue button */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #9a67ea;
+  background-color: #aacfe6;
+  color: #1a232a;
+}
+/* Hide number input spinner controls */
+
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

@@ -7,7 +7,7 @@ interface BolusProps {
 const Bolus: React.FC<BolusProps> = ({ bolus }) => {
     return (
         <div className="bolus-result">
-            <h1>{bolus != null ? bolus + "units" : "Invalid input"}</h1>
+            <h1>{bolus != null ? bolus + " units" : "Invalid input"}</h1>
         </div>
     )
 }
