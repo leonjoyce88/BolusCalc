@@ -71,7 +71,7 @@ function App() {
                     setReading(result)
                     const timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000)
                     console.log("fetching next reading in", timeoutMs / 1000, "s")
-                    timeoutRef.current = setTimeout(() => fetchData(), timeoutMs)
+                    timeoutRef.current = setTimeout(() => fetchData(), (timeoutMs < 0 ? 60000 : timeoutMs))
                 }
 
             } catch (error: any) {

@@ -23,6 +23,7 @@ html, body, #root {
   color: var(--color-text-light);
   text-align: center;
   height: 100%;
+  overflow:hidden;
 }
 
 #root {
@@ -32,17 +33,17 @@ html, body, #root {
 }
 
 .app-wrapper {
-  max-width: 640px;
-  margin: 0 auto 60px;
-  padding: 40px 20px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto; /* allow scroll only if needed */
 }
-
 @media (max-width: 767px) {
   html, body {
-    height: auto;
+    height: 100%;
   }
   .app-wrapper {
     padding: 20px 12px;
