@@ -1,0 +1,54 @@
+:root {
+  --color-bg-dark: #22282e;
+  --color-bg-panel: #2e3a47;
+  --color-bg-panel-alt: #557a95;
+  --color-text-light: #cfd8dc;
+  --color-text-bright: #e1f0fb;
+  --color-text-muted: #90a4ae;
+  --color-text-accent: #89c2d9;
+  --color-btn-bg: #89c2d9;
+  --color-btn-hover-bg: #aacfe6;
+  --color-btn-text-dark: #22282e;
+  --color-btn-text-hover: #1a232a;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --shadow-light: rgba(137, 194, 217, 0.6);
+  --shadow-dark: rgba(0, 0, 0, 0.45);
+}
+
+html, body, #root {
+  margin: 0; padding: 0;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-light);
+  text-align: center;
+  height: 100%;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app-wrapper {
+  max-width: 640px;
+  margin: 0 auto 60px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+@media (max-width: 767px) {
+  html, body {
+    height: auto;
+  }
+  .app-wrapper {
+    padding: 20px 12px;
+    margin: 0 auto;
+    gap: 24px;
+    overflow: visible;
+    justify-content: flex-start;
+  }
+}

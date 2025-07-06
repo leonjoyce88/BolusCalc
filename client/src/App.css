@@ -1,114 +1,192 @@
-/* Root App Container */
+:root {
+  --color-bg-dark: #22282e;
+  --color-bg-panel: #2e3a47;
+  --color-bg-panel-alt: #557a95;
+  --color-text-light: #cfd8dc;
+  --color-text-bright: #e1f0fb;
+  --color-text-muted: #90a4ae;
+  --color-text-accent: #89c2d9;
+  --color-btn-bg: #89c2d9;
+  --color-btn-hover-bg: #aacfe6;
+  --color-btn-text-dark: #22282e;
+  --color-btn-text-hover: #1a232a;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --shadow-light: rgba(137, 194, 217, 0.6);
+  --shadow-dark: rgba(0, 0, 0, 0.45);
+}
+
+html, body, #root {
+  margin: 0; padding: 0;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-light);
+  text-align: center;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
-  background-color: #22282e; /* Dark soft grey-blue */
 }
 
-/* General Styles */
-body {
-  font-family: 'Segoe UI', 'Roboto', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #22282e; /* Matches root */
-  color: #cfd8dc; /* Light grey-blue text */
-}
-
-/* App Wrapper – Central Column Layout */
 .app-wrapper {
+  max-width: 640px;
+  margin: 0 auto 60px;
+  padding: 40px 20px;
   display: flex;
   flex-direction: column;
   gap: 40px;
-  padding: 40px 20px;
-  max-width: 640px;
-  margin: 0 auto 60px auto;
 }
 
-/* Top Info Panel */
-.top-info {
-  background-color: #2e3a47; /* Slightly lighter blue-grey */
+.top-info, .bolus-result {
+  background-color: var(--color-bg-panel);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 3px 12px var(--shadow-dark);
   padding: 24px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Input + Icon Button Layout */
-.input-icon-wrapper {
+.bolus-result {
+  background: linear-gradient(135deg, #3c5a78, #557a95);
+  color: var(--color-text-bright);
+  padding: 44px;
+  margin-top: 48px;
+  box-shadow: 0 8px 24px var(--shadow-dark);
+}
+
+.bolus-result h1 {
+  font-weight: 700;
+  font-size: 54px;
+  margin: 0;
+  color: var(--color-text-bright);
+  text-align: center;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-accent);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  padding: 22px;
+}
+
+.form-row, .input-icon-wrapper {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
-.input-icon-wrapper input {
-  flex-grow: 1;
-  min-width: 0;
+.input-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  /* Let it size naturally by default */
+  height: auto;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 14px;
+  align-items: center;
 }
 
-/* Icon Button */
-.icon-button {
-  width: 42px;
-  height: 42px;
-  background-color: #3c4a5a;
-  border: none;
-  border-radius: 8px;
+/* Make all inputs inside .form-row have 100% width of their column */
+.form-row input {
+  width: 100%;
+  max-width: 320px; /* or whatever max width you prefer */
+  box-sizing: border-box;
+}
+
+label {
+  font-weight: 600;
+  color: #b0bec5;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+label:hover {
+  color: var(--color-text-accent);
+}
+
+.value-container {
+  width: 100%;
+  max-width: 240px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #89c2d9; /* Soft blue */
-  cursor: pointer;
-  transition: background-color 0.25s ease;
+  box-sizing: border-box;
 }
 
-.icon-button:hover {
-  background-color: #5588a3;
-  color: #e1f0fb;
+.input-icon-wrapper {
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 400px;
 }
 
-.icon-button:focus {
-  outline: 2px solid #89c2d9;
-  outline-offset: 2px;
+@media (min-width: 768px) {
+  .value-container {
+    max-width: 320px;
+  }
+  .container {
+    grid-template-columns: 1fr 1fr;
+  }
+  .form-row {
+    grid-template-columns: 1fr 2fr;
+  }
+  input {
+    max-width: 100%;
+  }
+  p {
+    font-size: 18px;
+  }
+  h1 {
+    font-size: 28px;
+  }
+.input-icon-wrapper {
+    height: 56px; /* Fixed height on wider screens */
+  }
 }
 
-/* Input Styles */
 input {
   width: 100%;
   padding: 18px 20px;
   font-size: 20px;
   border: 1px solid #3c4a5a;
-  border-radius: 8px;
-  background-color: #2e3a47;
-  color: #cfd8dc;
+  border-radius: var(--border-radius);
+  background-color: var(--color-bg-panel);
+  color: var(--color-text-light);
   box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input:focus {
   outline: none;
-  border-color: #89c2d9;
-  box-shadow: 0 0 8px rgba(137, 194, 217, 0.6);
+  border-color: var(--color-text-accent);
+  box-shadow: 0 0 8px var(--shadow-light);
 }
 
-/* Editable */
 input.editable {
-  background-color: #2e3a47;
   cursor: text;
+  height: 100%;
 }
 
-input.editable:focus {
-  border-color: #89c2d9;
-  box-shadow: 0 0 8px rgba(137, 194, 217, 0.6);
-}
-
-/* Readonly */
 input.readonly {
-  background-color: #557a95; /* Muted steel blue */
-  color: #e1f0fb; /* Very light blue */
+  background-color: var(--color-bg-panel-alt);
+  color: var(--color-text-bright);
   border: none;
   font-weight: 600;
   cursor: default;
@@ -119,149 +197,33 @@ input.readonly:focus {
   outline: none;
 }
 
-/* Trend + Time Row */
-.trend-time-row {
+.reading-display {
+  width: 100%;
+  height: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  gap: 16px;
-  font-size: 14px;
-  color: #90a4ae; /* Muted light blue-grey */
-}
-
-.trend-time-row .trend-label,
-.trend-time-row .time-label {
-  font-weight: 700;
-}
-
-/* Input Container */
-.container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
-  padding: 22px;
-}
-
-/* Input Form Row */
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 14px;
-  align-items: center;
-}
-
-/* Label Styling */
-label {
-  font-weight: 600;
-  color: #b0bec5; /* Soft blue grey */
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-label:hover {
-  color: #89c2d9;
-}
-
-/* Bolus Result Styling */
-.bolus-result {
-  background: linear-gradient(135deg, #3c5a78, #557a95); /* Soft blue gradient */
-  color: #e1f0fb;
-  padding: 44px;
+  gap: 8px;
+  background: linear-gradient(135deg, #3c5a78, #557a95);
+  color: var(--color-text-bright);
+  padding: 14px 20px;
   border-radius: 14px;
-  margin-top: 48px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-}
-
-.bolus-result h1 {
-  font-size: 54px;
-  margin: 0;
   font-weight: 700;
-  color: #e1f0fb;
-  text-align: center;
+  font-size: 20px;
+  box-shadow: 0 8px 24px var(--shadow-dark);
+  user-select: none;
+  cursor: default;
+  box-sizing: border-box;
 }
 
-/* Optional Bolus Title */
-.section-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #89c2d9;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-/* Responsive Styling */
-@media (min-width: 768px) {
-  .container {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr 2fr;
-  }
-
-  input {
-    max-width: 100%;
-  }
-
-  p {
-    font-size: 18px;
-  }
-
-  h1 {
-    font-size: 28px;
-  }
-}
-
-/* Mobile Styling */
-@media (max-width: 767px) {
-  html, body {
-    height: auto;
-  }
-
-  .app-wrapper {
-    padding: 20px 12px;
-    margin: 0 auto;
-    gap: 24px;
-    overflow: visible;
-    justify-content: flex-start;
-  }
-
-  .top-info,
-  .container,
-  .bolus-result {
-    margin-bottom: 18px;
-    padding: 18px;
-  }
-
-  input {
-    padding: 16px;
-    font-size: 18px;
-  }
-
-  .trend-time-row {
-    font-size: 12px;
-  }
-
-  .bolus-result h1 {
-    font-size: 40px;
-  }
-
-  .section-title {
-    font-size: 20px;
-  }
-
-  label, p {
-    font-size: 15px;
-  }
-}
-
-/* Button Styling */
 button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 14px 28px;
   font-size: 17px;
-  color: #22282e; /* Dark background text */
-  background-color: #89c2d9; /* Soft blue button */
+  color: var(--color-btn-text-dark);
+  background-color: var(--color-btn-bg);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -270,19 +232,88 @@ button {
 }
 
 button:hover {
-  background-color: #aacfe6;
-  color: #1a232a;
+  background-color: var(--color-btn-hover-bg);
+  color: var(--color-btn-text-hover);
 }
-/* Hide number input spinner controls */
 
-/* Chrome, Safari, Edge, Opera */
+.icon-button {
+  width: 42px;
+  height: 42px;
+  background-color: #3c4a5a;
+  border: none;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-accent);
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.icon-button:hover {
+  background-color: #5588a3;
+  color: var(--color-text-bright);
+}
+
+.icon-button:focus {
+  outline: 2px solid var(--color-text-accent);
+  outline-offset: 2px;
+}
+
+.trend-time-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.trend-time-row .trend-label,
+.trend-time-row .time-label {
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  html, body {
+    height: auto;
+  }
+  .app-wrapper {
+    padding: 20px 12px;
+    margin: 0 auto;
+    gap: 24px;
+    overflow: visible;
+    justify-content: flex-start;
+  }
+  .top-info, .container, .bolus-result {
+    margin-bottom: 18px;
+    padding: 18px;
+  }
+  input {
+    padding: 16px;
+    font-size: 18px;
+  }
+  .trend-time-row {
+    font-size: 12px;
+  }
+  .bolus-result h1 {
+    font-size: 40px;
+  }
+  .section-title {
+    font-size: 20px;
+  }
+  label, p {
+    font-size: 15px;
+  }
+}
+
+/* Remove number input spinners */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
