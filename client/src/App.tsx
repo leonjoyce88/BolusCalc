@@ -7,6 +7,8 @@ import Bolus from './components/Bolus.jsx';
 import { FormData, FormField } from './types/form';
 import { Reading } from './types/reading';
 
+const MinInMs = 60000
+
 
 function App() {
     const [reading, setReading] = useState<Reading | null>(null)
@@ -56,27 +58,29 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch('https://boluscalc-production.up.railway.app/new')
+                const res = await fetch('http://localhost:3000/new')
                 if (!res.ok) {
                     if (res.status === 500) {
-                        console.error("Server error: No glucose data available")
+                        throw new Error("Server error: No glucose data available")
                     } else {
-                        console.error("unexpected error", res.status)
+                        throw new Error("unexpected error" + res.status)
                     }
-                    return
                 }
                 const result: Reading = await res.json()
 
                 if (result && result.timestamp) {
                     setReading(result)
-                    const timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000)
+                    let timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000)
+                    if (timeoutMs < 0) {
+                        throw new Error("Data stale")
+                    }
                     console.log("fetching next reading in", timeoutMs / 1000, "s")
-                    timeoutRef.current = setTimeout(() => fetchData(), (timeoutMs < 0 ? 60000 : timeoutMs))
+                    timeoutRef.current = setTimeout(() => fetchData(), timeoutMs)
                 }
 
             } catch (error: any) {
-                console.error("Error fetching data", error)
-                timeoutRef.current = setTimeout(() => fetchData(), 5000)
+                console.error("Error fetching data retry in ", MinInMs / 1000, " seconds", error)
+                timeoutRef.current = setTimeout(() => fetchData(), MinInMs)
             }
         };
         fetchData();
