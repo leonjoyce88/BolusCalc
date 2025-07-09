@@ -1,12 +1,42 @@
-# Bolus Calculator https://leonjoyce88.github.io/BolusCalc/
+# Bolus Calculator
 
-This calculator is to aid diabetics with dosing descisions for their mealtime insulin.
+[Live Site](https://leonjoyce88.github.io/BolusCalc/)
 
-# Features
-Fetches my current BG data(hope to extend this in future)
-Allows input of parameters to calculate bolus dosage for mealtime/correction insulin
+A tool to calculate mealtime and correction insulin doses using live blood glucose data and user inputs.
 
+---
 
+## Features
 
+- Fetches live blood glucose data via a Node/TypeScript backend
+- Calculates bolus insulin based on carbs, correction factor, and target BG
+
+---
+
+## Tech Stack
+
+- Backend: Node.js + TypeScript
+- Frontend: React + TypeScript + Vite
+- Deployment: GitHub Pages (frontend)
+
+---
+
+## Running Locally
+
+1. Start backend server:
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+2. Start frontend:
+
+```bash
+cd client
+npm install
+npm run dev
+```
 
 
