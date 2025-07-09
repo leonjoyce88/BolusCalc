@@ -8,7 +8,8 @@ import { FormData, FormField } from './types/form';
 import { Reading } from './types/reading';
 
 const MinInMs = 60000
-
+//@ts-ignore
+const apiUrl = import.meta.env.VITE_API_BASE_URL
 
 function App() {
     const [reading, setReading] = useState<Reading | null>(null)
@@ -58,7 +59,7 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch("https://boluscalc-production.up.railway.app/new")
+                const res = await fetch(`${apiUrl}/new`)
                 if (!res.ok) {
                     if (res.status === 500) {
                         throw new Error("Server error: No glucose data available")
