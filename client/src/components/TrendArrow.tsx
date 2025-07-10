@@ -7,26 +7,27 @@ interface TrendArrowProps {
 const TrendArrow: React.FC<TrendArrowProps> = ({ trend }) => {
     const color = '#a5adcb';
     const size = 20;
+    console.log(trend)
 
     switch (trend) {
-        case 'double-up':
+        case 'doubleup':
             return (
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                     <ArrowUp size={size} color={color} />
                     <ArrowUp size={size} color={color} />
                 </div>
             );
-        case 'single-up':
+        case 'singleup':
             return <ArrowUp size={size} color={color} />;
-        case 'forty-five-up':
+        case 'fortyfiveup':
             return <ArrowUpRight size={size} color={color} />;
         case 'flat':
             return <ArrowRight size={size} color={color} />;
-        case 'forty-five-down':
+        case 'fortyfivedown':
             return <ArrowDownRight size={size} color={color} />;
-        case 'single-down':
+        case 'singledown':
             return <ArrowDown size={size} color={color} />;
-        case 'double-down':
+        case 'doubledown':
             return (
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                     <ArrowDown size={size} color={color} />
