@@ -13,12 +13,18 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL
 
 function App() {
     const [reading, setReading] = useState<Reading | null>(null)
-    const [formData, setFormData] = useState<FormData>({ ratio: "30", factor: "6", target: "6", carbs: "0" })
+
+    const defaultFormData = { ratio: "30", factor: "6", target: "6", carbs: "0" }
+    const [formData, setFormData] = useState<FormData>(() => {
+        const saved = localStorage.getItem('userSettings')
+        return saved ? JSON.parse(saved) : defaultFormData
+    })
+    useEffect(() => {
+        localStorage.setItem('userSettings', JSON.stringify(formData))
+    }, [formData])
 
     const [manualEntry, setManualEntry] = useState<boolean>(false)
     const [manualMmol, setManualMmol] = useState<string>(formData.target)
-
-    useEffect(() => { console.log(manualEntry) }, [manualEntry])
 
     const handleFormChange = (field: FormField) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
