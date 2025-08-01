@@ -12,12 +12,25 @@ const MinInMs = 60000
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 
 function App() {
+    const [sse, setSse] = useState<Reading | null>(null)
+    useEffect(() => {
+        const eventSource = new EventSource(`${apiUrl}/sse`)
+        eventSource.onmessage = (event) => {
+            console.log("new data")
+            const data = JSON.parse(event.data);
+            setSse({ ...data });
+        }
+
+        return () => eventSource.close();
+    }, [])
+
     const [reading, setReading] = useState<Reading | null>(null)
 
     const defaultFormData = { ratio: "30", factor: "6", target: "6", carbs: "0" }
     const [formData, setFormData] = useState<FormData>(() => {
-        const saved = localStorage.getItem('userSettings')
-        return saved ? JSON.parse(saved) : defaultFormData
+        // const saved = localStorage.getItem('userSettings')
+        // return saved ? JSON.parse(saved) : defaultFormData
+        return defaultFormData
     })
     useEffect(() => {
         localStorage.setItem('userSettings', JSON.stringify(formData))
@@ -77,7 +90,7 @@ function App() {
 
                 if (result && result.timestamp) {
                     setReading(result)
-                    let timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000)
+                    let timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000) + 5000
                     if (timeoutMs < 0) {
                         throw new Error("Data stale")
                     }
@@ -100,6 +113,7 @@ function App() {
 
     return (
         <div className='app-wrapper'>
+            <p>sse {sse?.mmol}</p>
             <TopInfo reading={reading} handleMmolChange={handleMmolChange} manualEntry={manualEntry} setManualEntry={setManualEntry} manualMmol={manualMmol} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolusValue} />

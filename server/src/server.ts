@@ -4,6 +4,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 
 import { GlucoseEntry } from './types/glucoseEntry'
+import { read } from 'fs'
 
 dotenv.config()
 
@@ -38,6 +39,7 @@ const MinInMs = 60000
 const DexcomInterval = 5 * MinInMs
 
 let cachedReading: GlucoseEntry | null = null
+let readingDelay: number = 0;
 
 const fetchData = async () => {
     try {
@@ -69,6 +71,54 @@ app.get("/new", async (_req: Request, res: Response) => {
         timestamp: cachedReading.timestamp,
     })
 })
+
+app.get("/sse", async (_req, res, _next) => {
+    console.log("sse hit")
+    res.set({
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive", // allowing TCP connection to remain open for multiple HTTP requests/responses
+        "Content-Type": "text/event-stream", // media type for Server Sent Events (SSE)
+    });
+    res.flushHeaders();
+
+    const sendReading = () => {
+        if (cachedReading) {
+            res.write(`data: ${JSON.stringify(cachedReading)}\n\n`);
+        }
+    }
+
+    const isStale = !cachedReading || Date.now() - cachedReading.timestamp > DexcomInterval
+    if (isStale) {
+        await fetchData()
+    }
+    sendReading()
+
+    let timeout: any
+
+    const scheduleNextUpdate = async () => {
+        if (!cachedReading) return
+        let targetTime = cachedReading.timestamp + DexcomInterval
+        let delay = targetTime - Date.now()
+
+        console.log("Next reading scheduled in ", delay / 1000, "s")
+
+        timeout = setTimeout(async () => {
+            console.log("fetching data")
+            await fetchData()
+            sendReading()
+            scheduleNextUpdate()
+        }, delay + 10000)
+    }
+
+    scheduleNextUpdate()
+
+    res.on("close", () => {
+        console.log("connection closed")
+        clearTimeout(timeout);
+        res.end();
+    });
+});
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
