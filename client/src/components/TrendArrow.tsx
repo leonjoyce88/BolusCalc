@@ -7,7 +7,6 @@ interface TrendArrowProps {
 const TrendArrow: React.FC<TrendArrowProps> = ({ trend }) => {
     const color = '#a5adcb';
     const size = 20;
-    console.log(trend)
 
     switch (trend) {
         case 'doubleup':

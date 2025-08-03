@@ -7,37 +7,32 @@ import Bolus from './components/Bolus.jsx';
 import { FormData, FormField } from './types/form';
 import { Reading } from './types/reading';
 
-const MinInMs = 60000
 //@ts-ignore
-const apiUrl = import.meta.env.VITE_API_BASE_URL
+const API_URL = import.meta.env.VITE_API_BASE_URL
+const DEFAULT_FORM_DATA = { ratio: "30", factor: "6", target: "6", carbs: "0" }
 
 function App() {
-    const [sse, setSse] = useState<Reading | null>(null)
+    //Fetch Readings
+    const [reading, setReading] = useState<Reading | null>(null)
+
     useEffect(() => {
-        const eventSource = new EventSource(`${apiUrl}/sse`)
+        const eventSource = new EventSource(`${API_URL}/sse`)
         eventSource.onmessage = (event) => {
-            console.log("new data")
             const data = JSON.parse(event.data);
-            setSse({ ...data });
+            setReading({ ...data });
         }
 
         return () => eventSource.close();
     }, [])
 
-    const [reading, setReading] = useState<Reading | null>(null)
-
-    const defaultFormData = { ratio: "30", factor: "6", target: "6", carbs: "0" }
+    //Form handling
     const [formData, setFormData] = useState<FormData>(() => {
-        // const saved = localStorage.getItem('userSettings')
-        // return saved ? JSON.parse(saved) : defaultFormData
-        return defaultFormData
+        const saved = localStorage.getItem('userSettings')
+        return saved ? JSON.parse(saved) : DEFAULT_FORM_DATA
     })
     useEffect(() => {
         localStorage.setItem('userSettings', JSON.stringify(formData))
     }, [formData])
-
-    const [manualEntry, setManualEntry] = useState<boolean>(false)
-    const [manualMmol, setManualMmol] = useState<string>(formData.target)
 
     const handleFormChange = (field: FormField) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -46,11 +41,17 @@ function App() {
             [field]: value,
         }))
     }
+
+    //Manual Glucose entry
+    const [manualEntry, setManualEntry] = useState<boolean>(false)
+    const [manualMmol, setManualMmol] = useState<string>(formData.target)
+
     const handleMmolChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setManualMmol(value)
     }
 
+    //Bolus Calculation
     const bolusValue = useMemo(() => {
         const { target, factor, carbs, ratio } = formData
         let mmol = reading?.mmol
@@ -73,47 +74,8 @@ function App() {
         return total
     }, [reading, formData, manualEntry, manualMmol])
 
-    const timeoutRef = useRef<number | null>(null)
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetch(`${apiUrl}/new`)
-                if (!res.ok) {
-                    if (res.status === 500) {
-                        throw new Error("Server error: No glucose data available")
-                    } else {
-                        throw new Error("unexpected error" + res.status)
-                    }
-                }
-                const result: Reading = await res.json()
-
-                if (result && result.timestamp) {
-                    setReading(result)
-                    let timeoutMs = result.timestamp - Date.now() + (5 * 60 * 1000) + 5000
-                    if (timeoutMs < 0) {
-                        throw new Error("Data stale")
-                    }
-                    console.log("fetching next reading in", timeoutMs / 1000, "s")
-                    timeoutRef.current = setTimeout(() => fetchData(), timeoutMs)
-                }
-
-            } catch (error: any) {
-                console.error("Error fetching data retry in ", MinInMs / 1000, " seconds", error)
-                timeoutRef.current = setTimeout(() => fetchData(), MinInMs)
-            }
-        };
-        fetchData();
-        return () => {
-            if (timeoutRef.current !== null) {
-                clearTimeout(timeoutRef.current)
-            }
-        }
-    }, []);
-
     return (
         <div className='app-wrapper'>
-            <p>sse {sse?.mmol}</p>
             <TopInfo reading={reading} handleMmolChange={handleMmolChange} manualEntry={manualEntry} setManualEntry={setManualEntry} manualMmol={manualMmol} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolusValue} />
