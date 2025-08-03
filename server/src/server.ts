@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 import { GlucoseEntry } from './types/glucoseEntry'
 import { read } from 'fs'
 
-dotenv.config()
+dotenv.config({ override: true })
 
 const app = express()
 
@@ -108,7 +108,7 @@ app.get("/sse", async (_req, res, _next) => {
             await fetchData()
             sendReading()
             scheduleNextUpdate()
-        }, delay + 10000)
+        }, delay + 5000)
     }
 
     scheduleNextUpdate()
