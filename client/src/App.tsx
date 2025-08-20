@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import './styles/globals.css'
 import TopInfo from './components/TopInfo.jsx';
 import Inputs from './components/Inputs.jsx';
@@ -66,7 +66,7 @@ function App() {
 
         let correction = (mmol - parseFloat(target)) / parseFloat(factor)
         let meal = parseFloat(carbs) / parseFloat(ratio)
-        let total = Math.trunc(2 * (correction + meal)) / 2;
+        let total = Math.round(2 * (correction + meal)) / 2;
 
         if (total < 0.5 || isNaN(total)) {
             return 0
