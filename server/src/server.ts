@@ -2,9 +2,9 @@ import { WebSocketServer } from 'ws';
 import DexcomFetcher from './dexcom';
 
 
-const corsOrigin = process.env.ALLOWED_ORIGIN
-if (!corsOrigin) {
-    console.error("must provide cors origin")
+const allowedOrigin = process.env.ALLOWED_ORIGIN
+if (!allowedOrigin) {
+    console.error("must provide allowed request origin")
     process.exit(1)
 }
 
@@ -26,10 +26,8 @@ class DexcomWebSocketServer {
         }
     }
     startWSS() {
-        console.log(process.env.ALLOWED_ORIGIN)
         this.wss.on("connection", (ws, req) => {
             const origin = req.headers.origin;
-            console.log(origin)
 
             if (origin !== process.env.ALLOWED_ORIGIN
             ) {
@@ -40,9 +38,8 @@ class DexcomWebSocketServer {
 
             console.log("[server]WebSocket client connected")
 
-            if (this.fetcher.cachedReading) {
-                ws.send(JSON.stringify(this.fetcher.cachedReading))
-            }
+            const latest = this.fetcher.getLatest()
+            if (latest) { ws.send(JSON.stringify(latest)) }
 
             // if first client, kick off loop
             if (this.wss.clients.size === 1) {
