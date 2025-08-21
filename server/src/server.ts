@@ -26,7 +26,18 @@ class DexcomWebSocketServer {
         }
     }
     startWSS() {
-        this.wss.on("connection", (ws) => {
+        console.log(process.env.ALLOWED_ORIGIN)
+        this.wss.on("connection", (ws, req) => {
+            const origin = req.headers.origin;
+            console.log(origin)
+
+            if (origin !== process.env.ALLOWED_ORIGIN
+            ) {
+                console.warn(`[WS] Blocked connection from origin: ${origin}`);
+                ws.close(1008, "Unauthorized"); // 1008 = Policy Violation
+                return;
+            }
+
             console.log("[server]WebSocket client connected")
 
             if (this.fetcher.cachedReading) {
