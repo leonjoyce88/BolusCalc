@@ -16,7 +16,7 @@ function App() {
     const [reading, setReading] = useState<Reading | null>(null)
 
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:8080');
+        const ws = new WebSocket(API_URL);
 
         ws.onopen = () => {
             console.log('Connected to server');

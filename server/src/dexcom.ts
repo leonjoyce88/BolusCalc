@@ -31,6 +31,9 @@ class DexcomFetcher extends EventEmitter {
 
         this.loopTimer = null;
     }
+    getLatest() {
+        return this.cachedReading
+    }
 
     fetchData = async () => {
         try {
