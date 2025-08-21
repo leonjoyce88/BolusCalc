@@ -58,11 +58,11 @@ class DexcomFetcher extends EventEmitter {
     }
 
     isStale() {
-        return !this.cachedReading || Date.now() - this.cachedReading.timestamp > DEXCOMINTERVAL
+        return !this.cachedReading || Date.now() - this.cachedReading.timestamp > DEXCOMINTERVAL + DELAYTOLERANCE
     }
 
     nextReadingDelay() {
-        let targetTime = this.cachedReading ? this.cachedReading.timestamp + DEXCOMINTERVAL : DEXCOMINTERVAL;
+        let targetTime = this.cachedReading ? this.cachedReading.timestamp + DEXCOMINTERVAL : Date.now();
         let delay = targetTime - Date.now() + DELAYTOLERANCE
         return delay
     }
@@ -72,9 +72,8 @@ class DexcomFetcher extends EventEmitter {
         console.log("[DexomFetcher] loop started")
 
         const run = async () => {
-            if (this.isStale()) {
-                await this.fetchData()
-            }
+            if (this.isStale()) { await this.fetchData() }
+
             this.loopTimer = setTimeout(run, this.nextReadingDelay())
         }
 

@@ -26,6 +26,12 @@ class DexcomWebSocketServer {
         }
     }
     startWSS() {
+
+        this.fetcher.on("update", (reading) => {
+            this.broadcast(reading);
+            console.log("[server]broadcast reading")
+        })
+
         this.wss.on("connection", (ws, req) => {
             const origin = req.headers.origin;
 
@@ -46,10 +52,6 @@ class DexcomWebSocketServer {
                 this.fetcher.startLoop()
             }
 
-            this.fetcher.on("update", (reading) => {
-                this.broadcast(reading);
-                console.log("[server]broadcast reading")
-            })
 
             ws.on("close", () => {
                 console.log("[server]WebSocket client disconnected")
