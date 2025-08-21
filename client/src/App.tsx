@@ -16,14 +16,23 @@ function App() {
     const [reading, setReading] = useState<Reading | null>(null)
 
     useEffect(() => {
-        const eventSource = new EventSource(`${API_URL}/sse`)
-        eventSource.onmessage = (event) => {
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onopen = () => {
+            console.log('Connected to server');
+        };
+
+        ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             setReading({ ...data });
-        }
+        };
 
-        return () => eventSource.close();
+        ws.onclose = () => {
+            console.log('Disconnected from server');
+        };
     }, [])
+
+
 
     //Form handling
     const [formData, setFormData] = useState<FormData>(() => {
