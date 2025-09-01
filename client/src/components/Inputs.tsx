@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormData } from "../types/form";
-
+import { Settings, X } from "lucide-react"
 interface InputsProps {
     formData: FormData;
     handleFormChange: (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+    settingsPanel: boolean
+    setSettingsPanel: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// Reusable input component
 interface InputWithUnitProps {
     id: string;
     label: string;
@@ -18,12 +19,9 @@ interface InputWithUnitProps {
 
 const InputWithUnit: React.FC<InputWithUnitProps> = ({ id, label, value, onChange, placeholder, unit }) => (
     <div className="relative w-full flex flex-col">
-        {/* Label above, clickable */}
         <label htmlFor={id} className="mb-1 text-sm font-medium text-gray-700 cursor-pointer">
             {label}
         </label>
-
-        {/* Input with unit inside */}
         <div className="relative w-full">
             <input
                 id={id}
@@ -48,36 +46,51 @@ const InputWithUnit: React.FC<InputWithUnitProps> = ({ id, label, value, onChang
     </div>
 );
 
-const Inputs: React.FC<InputsProps> = ({ formData, handleFormChange }) => {
+const Inputs: React.FC<InputsProps> = ({ formData, handleFormChange, settingsPanel, setSettingsPanel }) => {
     return (
-        <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6 flex flex-col space-y-4">
-            <InputWithUnit
-                id="carb-ratio"
-                label="Carb ratio"
-                value={formData.ratio}
-                onChange={handleFormChange("ratio")}
-                placeholder="Enter value"
-                unit="grams/unit"
-            />
+        <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6 flex flex-col space-y-4 relative">
 
-            <InputWithUnit
-                id="correction-factor"
-                label="Correction Factor"
-                value={formData.factor}
-                onChange={handleFormChange("factor")}
-                placeholder="Enter value"
-                unit="mmol/L/unit"
-            />
+            <button
+                onClick={() => setSettingsPanel(!settingsPanel)}
+                className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 p-2 rounded-full bg-white hover:bg-gray-300 shadow flex items-center justify-center transition-all duration-200"
+                title={!settingsPanel ? "Open settings panel" : "Close settings panel"}
+            >
+                {!settingsPanel ?
+                    <Settings className="w-5 h-5 text-gray-700" /> :
+                    <X className="w-5 h-5 text-gray-700" />}
+            </button>
 
-            <InputWithUnit
-                id="target"
-                label="Target"
-                value={formData.target}
-                onChange={handleFormChange("target")}
-                placeholder="Enter target mmol"
-                unit="mmol/L"
-            />
+            <div
+                className={`overflow-hidden transition-all duration-200 ${settingsPanel ? "max-h-[500px] opacity-100 mb-0" : "max-h-0 opacity-0 mb-0"
+                    }`}
+            >
+                <InputWithUnit
+                    id="carb-ratio"
+                    label="Carb ratio"
+                    value={formData.ratio}
+                    onChange={handleFormChange("ratio")}
+                    placeholder="Enter value"
+                    unit="grams/unit"
+                />
 
+                <InputWithUnit
+                    id="correction-factor"
+                    label="Correction Factor"
+                    value={formData.factor}
+                    onChange={handleFormChange("factor")}
+                    placeholder="Enter value"
+                    unit="mmol/L/unit"
+                />
+
+                <InputWithUnit
+                    id="target"
+                    label="Target"
+                    value={formData.target}
+                    onChange={handleFormChange("target")}
+                    placeholder="Enter target mmol"
+                    unit="mmol/L"
+                />
+            </div>
             <InputWithUnit
                 id="meal-carbs"
                 label="Meal Carbs"
