@@ -34,7 +34,8 @@ const InputWithUnit: React.FC<InputWithUnitProps> = ({ id, label, value, onChang
                     if (e.key === "Enter") {
                         (e.target as HTMLInputElement).blur(); // remove focus
                     }
-                }} placeholder={placeholder}
+                }} 
+                placeholder={placeholder}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-blue-400 focus:border-blue-400 transition-colors duration-200"
             />
             <label
