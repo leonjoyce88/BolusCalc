@@ -55,7 +55,7 @@ const TopInfo: React.FC<TopInfoProps> = ({
     const getCircleColor = (value: number | "") => {
         if (value == "") return "bg-white";
         if (value < 4) return "bg-red-400"; // Low
-        if (value > 7.8) return "bg-orange-400"; // High
+        if (value > 10) return "bg-orange-400"; // High
         return "bg-white"; // Normal
     };
 
@@ -70,14 +70,12 @@ const TopInfo: React.FC<TopInfoProps> = ({
                     <div
                         className={`w-40 h-40 flex flex-col items-center justify-center rounded-full shadow-lg relative overflow-hidden ${getCircleColor(currentValue)}`}
                     >
-                        {/* Trend arrow below the value */}
                         {reading?.trend && !manualEntry && (
                             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
                                 <TrendArrow trend={reading.trend} />
                             </div>
                         )}
 
-                        {/* Glucose value always centered */}
                         {manualEntry ? (
                             <input
                                 ref={inputRef}
@@ -126,9 +124,10 @@ const TopInfo: React.FC<TopInfoProps> = ({
             </div>
 
             <span className="text-xs text-gray-600 mt-3 font-medium">
-                {minAgo != null
-                    ? `${minAgo} minute${minAgo === 1 ? "" : "s"} ago`
-                    : "Waiting for data"}
+                {manualEntry ? "Manual Entry"
+                    : (minAgo != null
+                        ? `${minAgo} minute${minAgo === 1 ? "" : "s"} ago`
+                        : "Waiting for data")}
             </span>
         </div >
     );

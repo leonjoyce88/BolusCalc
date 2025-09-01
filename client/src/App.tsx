@@ -34,6 +34,12 @@ function App() {
 
 
     //Form handling
+    const [settingsPanel, setSettingsPanel] = useState(() => {
+        if (localStorage.getItem('userSettings')) {
+            return false
+        }
+        return true
+    })
     const [formData, setFormData] = useState<FormData>(() => {
         const saved = localStorage.getItem('userSettings')
         return saved ? JSON.parse(saved) : DEFAULT_FORM_DATA
@@ -86,7 +92,7 @@ function App() {
 
         <div className="min-h-screen bg-gray-200 flex flex-col items-center p-6 space-y-6 text-white">
             <TopInfo reading={reading} handleMmolChange={handleMmolChange} manualEntry={manualEntry} setManualEntry={setManualEntry} manualMmol={manualMmol} />
-            <Inputs formData={formData} handleFormChange={handleFormChange} />
+            <Inputs formData={formData} handleFormChange={handleFormChange} settingsPanel={settingsPanel} setSettingsPanel={setSettingsPanel} />
             <Bolus bolus={bolusValue} />
         </div>
 
