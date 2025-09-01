@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import './styles/globals.css'
 import TopInfo from './components/TopInfo.jsx';
 import Inputs from './components/Inputs.jsx';
 import Bolus from './components/Bolus.jsx';
@@ -84,11 +83,13 @@ function App() {
     }, [reading, formData, manualEntry, manualMmol])
 
     return (
-        <div className='app-wrapper'>
+
+        <div className="min-h-screen bg-gray-200 flex flex-col items-center p-6 space-y-6 text-white">
             <TopInfo reading={reading} handleMmolChange={handleMmolChange} manualEntry={manualEntry} setManualEntry={setManualEntry} manualMmol={manualMmol} />
             <Inputs formData={formData} handleFormChange={handleFormChange} />
             <Bolus bolus={bolusValue} />
         </div>
+
     );
 }
 export default App
